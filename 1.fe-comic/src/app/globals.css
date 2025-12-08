@@ -35,6 +35,10 @@ body {
   font-family: var(--font-poppins), sans-serif;
 }
 
+.font-fira {
+  font-family: 'Fira Sans', sans-serif;
+}
+
 .release {
   background: #222;
   position: relative;
@@ -52,4 +56,24 @@ body {
   font-weight: 600;
   margin: 0;
   position: relative;
+}
+
+.selected-tab {
+  background: #222;
+}
+
+.size-title {
+  font-size: 13.3px;
+}
+
+.vertical-divider::before {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 33.33%;
+  background-color: #312f40;
+  /* Hoặc @apply bg-[#312f40] */
 }
