@@ -51,7 +51,7 @@ export default function Header() {
                         alt="Komik25.com"
                         fill
                         style={{ objectFit: "contain" }}
-                        // if logo is external, ensure next.config has remotePatterns
+                      // if logo is external, ensure next.config has remotePatterns
                       />
                     </div>
                     <span className="hdl sr-only">Komik25.com</span>
@@ -152,7 +152,7 @@ function SearchBox({
   setQuery,
   inputRef,
   onSubmit,
-  compact = false,
+  // compact = false,
 }: {
   query: string;
   setQuery: (v: string) => void;
@@ -168,7 +168,7 @@ function SearchBox({
       role="search"
       itemScope
       itemType="http://schema.org/SearchAction"
-      onSubmit={(e) => {
+      onSubmit={() => {
         // basic submit: allow default behaviour (redirect to /?s=)
         if (onSubmit) onSubmit();
       }}
@@ -198,4 +198,3 @@ function SearchBox({
     </form>
   );
 }
- 

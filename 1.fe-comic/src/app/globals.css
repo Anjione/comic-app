@@ -75,5 +75,75 @@ body {
   bottom: 0;
   left: 33.33%;
   background-color: #312f40;
-  /* Hoặc @apply bg-[#312f40] */
+}
+
+/* Đảm bảo Font Awesome 5 Free đã được tải */
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url('/fonts/fontawesome-webfont.woff2?v=5.15.4') format('woff2');
+  /* Điều chỉnh đường dẫn */
+}
+
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 400;
+  /* Regular weight cho icon rỗng */
+  font-display: block;
+  src: url('/fonts/fontawesome-webfont.woff2?v=5.15.4') format('woff2');
+}
+
+/* Lớp chung cho icon (::before) */
+.custom-tristate .checkbox-icon {
+  /* Đảm bảo span có vị trí để ::before có thể hoạt động */
+  display: flex;
+  align-items: center;
+  width: 17px;
+  /* Chiều rộng dành cho icon */
+  height: 17px;
+  /* Chiều cao dành cho icon */
+}
+
+/* Định nghĩa ::before trên lớp span.checkbox-icon */
+.custom-tristate .checkbox-icon::before {
+  display: inline-block;
+  font-family: "Font Awesome 5 Free";
+  font-size: 14px;
+  /* Kích thước */
+  margin-right: 5px;
+  line-height: 1;
+  /* Căn chỉnh vị trí dọc */
+}
+
+/* --- Trạng thái 1: UNCHECKED (Class: is-unchecked) --- */
+.custom-tristate.is-unchecked .checkbox-icon::before {
+  content: '\f14a';
+  /* Icon Square */
+  font-weight: 400;
+  /* Regular weight (cho rỗng) */
+  color: #5d5d5d;
+  /* Grey */
+}
+
+/* --- Trạng thái 2: CHECKED (Class: is-checked) --- */
+.custom-tristate.is-checked .checkbox-icon::before {
+  content: '\f14a';
+  /* Icon Check-Square (Dùng \f058 nếu muốn hình tròn/check khác) */
+  font-weight: 900;
+  /* Solid weight */
+  color: #28a745;
+  /* Green */
+}
+
+/* --- Trạng thái 3: EXCLUDED (Class: is-excluded) --- */
+.custom-tristate.is-excluded .checkbox-icon::before {
+  content: '\f057';
+  /* Icon Times Circle */
+  font-weight: 900;
+  /* Solid weight */
+  color: #ec0d2a;
+  /* Red */
 }

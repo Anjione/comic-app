@@ -18,10 +18,12 @@ import React from 'react';
 export default function Blog() {
 
     // Class cho tiêu đề chính
-    const titleClasses = "text-xl font-semibold text-white";
+    // Class cho tiêu đề chính
+    // const titleClasses = "text-xl font-semibold text-white";
 
     // Class cho nút "View All"
-    const viewAllClasses = "px-3 py-1 text-xs font-medium transition-colors rounded-sm bg-black text-white hover:bg-gray-700 uppercase";
+    // Class cho nút "View All"
+    // const viewAllClasses = "px-3 py-1 text-xs font-medium transition-colors rounded-sm bg-black text-white hover:bg-gray-700 uppercase";
 
     return (
         // Thay thế div.bixbox
