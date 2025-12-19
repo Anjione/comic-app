@@ -9,7 +9,13 @@ export type SeriesItem = {
     score: number; // 0-10
 };
 
-export const SAMPLE_GENRES: any[] = [
+export type GenreItem = {
+    id: number;
+    name: string;
+    url: string;
+};
+
+export const SAMPLE_GENRES: GenreItem[] = [
     { id: 1, name: 'Action', url: 'https://komik25.com/genres/action/' },
     { id: 2, name: 'Action Adventure', url: 'https://komik25.com/genres/action-adventure/' },
     { id: 3, name: 'Adaptation', url: 'https://komik25.com/genres/adaptation/' },

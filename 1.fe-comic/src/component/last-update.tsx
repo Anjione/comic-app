@@ -153,7 +153,7 @@ export default function LatestUpdate({ items, page = 1,
       </div>
 
       {/* Pagination */}
-      <Pagination items={items} page={page} pageSize={pageSize} basePath={basePath} />
+      <Pagination total={items.length} page={page} pageSize={pageSize} basePath={basePath} />
     </section>
   );
 }

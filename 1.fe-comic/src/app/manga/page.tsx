@@ -1,9 +1,7 @@
 import Genre from '@/component/genre';
-import QuickFilter from '@/component/quick-filter';
 import SearchBox from '@/component/search-box';
 import SerialPopular from '@/component/serial-popular';
 import { SAMPLE_GENRES } from '@/type/comic-info';
-import React, { Suspense } from 'react';
 import MangaList from './manga-list';
 // Vì trang này sử dụng searchParams, nên cần wrap trong Suspense nếu build static
 // Hoặc đơn giản là component trang
