@@ -1,8 +1,7 @@
 import Link from "next/link";
 
 
-export default function Pagination({ items, pageSize, page, basePath }: { items: any[], pageSize: number, page: number, basePath: string }) {
-    const total = items.length;
+export default function Pagination({ total, pageSize, page, basePath }: { total: number, pageSize: number, page: number, basePath: string }) {
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     const current = Math.min(Math.max(1, page), totalPages);
     const isFirstPage = current <= 1;

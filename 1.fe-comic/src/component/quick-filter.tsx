@@ -34,7 +34,7 @@ export default function QuickFilter({ order }: { order?: string }) {
     const handleGenreChange = (id: number) => {
         setGenreStates(prevStates => {
             const currentState = prevStates[id];
-            let newState = { ...prevStates };
+            const newState = { ...prevStates };
 
             if (!currentState) {
                 // Trạng thái 0 (Unchecked) -> 1 (Checked)
@@ -204,7 +204,7 @@ interface FilterDropdownProps {
 // --- Component con: Dropdown Radio đơn giản (Status, Type, Order) ---
 function FilterDropdown({ title, active, onToggle, currentValue, options, onSelect }: FilterDropdownProps) {
     // Tìm label của giá trị hiện tại để hiển thị lên nút
-    const selectedLabel = options.find((o: any) => o.value === currentValue)?.label || "All";
+    const selectedLabel = options.find((o: Option) => o.value === currentValue)?.label || "All";
 
     // Xử lý khi click vào một mục: Single select logic
     const handleItemClick = (value: string) => {

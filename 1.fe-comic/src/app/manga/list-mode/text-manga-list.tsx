@@ -10,8 +10,6 @@ import AlphabeticalNav from '@/component/alphabet-nav';
 
 export default function TextMangaList() {
 
-    // Class cho tiêu đề chính
-    const titleClasses = "text-xl font-semibold text-white";
     const bookmarks: SeriesItem[] = [
         { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
         { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },

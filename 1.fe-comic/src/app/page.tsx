@@ -8,8 +8,37 @@ import SerialPopular from "@/component/serial-popular";
 import { SAMPLE_GENRES } from "@/type/comic-info";
 
 
+export interface ChapterItem {
+  url: string;
+  title: string;
+  timeago: string;
+}
+
+export interface LatestManga {
+  id: string;
+  url: string;
+  title: string;
+  cover: string;
+  type: string;
+  isNew: boolean;
+  status: string;
+  chapters: ChapterItem[];
+}
+
+interface PopularManga {
+  id: number;
+  url: string;
+  title: string;
+  cover: string;
+  type: string;
+  colored: boolean;
+  chapter: string;
+  ratingPct: number;
+  score: number;
+}
+
 export default function Home() {
-  const sampleItems = [
+  const sampleItems: LatestManga[] = [
     {
       id: "1",
       title: "One Piece",
@@ -116,18 +145,6 @@ export default function Home() {
       ],
     },
   ];
-
-  interface PopularManga {
-    id: number;
-    url: string;
-    title: string;
-    cover: string;
-    type: string;
-    colored: boolean;
-    chapter: string;
-    ratingPct: number;
-    score: number;
-  }
 
   const popularMock: PopularManga[] = [
     {

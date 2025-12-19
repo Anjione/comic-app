@@ -10,10 +10,8 @@ import QuickFilter from '@/component/quick-filter';
 
 
 
-export default function MangaList({ order }: { order: any }) {
+export default function MangaList({ order }: { order?: string | string[] }) {
 
-    // Class cho tiêu đề chính
-    const titleClasses = "text-xl font-semibold text-white";
     const bookmarks: SeriesItem[] = [
         { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
         { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
@@ -46,7 +44,7 @@ export default function MangaList({ order }: { order: any }) {
                 role="tablist"
                 aria-label="Popular series range"
             >
-                <QuickFilter order={order} />
+                <QuickFilter order={Array.isArray(order) ? order[0] : order} />
             </div>
             <div
                 className="flex justify-end rounded transition-all duration-200 pr-[15px]"
@@ -58,7 +56,7 @@ export default function MangaList({ order }: { order: any }) {
                 </Link>
             </div>
             <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 p-5">
-                {pageItems.map((it, index) => {
+                {pageItems.map((it) => {
                     return (
                         <article key={it.id} className={`w-full bg-transparent rounded-md flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer`}>
                             {/* Cover */}
@@ -100,7 +98,7 @@ export default function MangaList({ order }: { order: any }) {
                 })}
             </div>
             {/* Pagination */}
-            <Pagination items={bookmarks} page={Constants.DEFAULT_PAGE} pageSize={Constants.DEFAULT_PAGE_SIZE} basePath={"/bookmark"} />
+            <Pagination total={bookmarks.length} page={Constants.DEFAULT_PAGE} pageSize={Constants.DEFAULT_PAGE_SIZE} basePath={"/bookmark"} />
         </div>
     );
 }
