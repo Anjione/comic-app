@@ -45,7 +45,7 @@ function tabClass(isActive: boolean) {
     // active: black background + white text
     // inactive: gray text, hover lighter
     return (
-        `px-8 py-1 text-[12px] font-medium transition-colors rounded-sm ` +
+        `px-1 py-1 text-[12px] font-medium transition-colors rounded-sm w-1/3 ` +
         (isActive ? "bg-black text-white" : "text-gray-400 hover:text-gray-200")
     ).trim();
 }
@@ -89,7 +89,7 @@ export default function SerialPopular(): JSX.Element {
                 </div>
 
                 {/* Content */}
-                <div className="grid grid-cols-1 gap-4 p-4">
+                <div className="grid grid-cols-1 gap-4 p-3">
                     {items.length > 0 ? (
                         items.map((it) => (
                             <article

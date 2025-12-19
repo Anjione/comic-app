@@ -49,4 +49,6 @@ export class Constants {
   static readonly AVALABLE_DOMAINS = DOMAINS;
   static readonly DOMAIN_LIST_URL =
     "https://raw.githubusercontent.com/zennomi/truyendex/refs/heads/develop/src/constants/DOMAINS.json";
+  static readonly DEFAULT_PAGE_SIZE = 20;
+  static readonly DEFAULT_PAGE = 1;
 }

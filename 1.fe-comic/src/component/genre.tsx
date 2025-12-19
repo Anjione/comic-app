@@ -27,15 +27,12 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
     // Style chung cho các thẻ thể loại
     const tagClasses = `
     inline-block 
-    py-1
     text-xs 
     font-medium 
     text-gray-300 
-    rounded-full 
     transition-colors 
     duration-200 
     hover:text-white
-    shadow-lg
   `;
 
     const [col1, col2, col3] = chunkArray(genres);
@@ -56,12 +53,12 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
             </div>
 
             {/* 💥 Cấu trúc GRID 3 CỘT với DIVIDER 💥 */}
-            <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] relative px-3">
+            <div className="w-full grid grid-cols-[1fr_auto_1fr_auto_1fr] relative px-3">
 
                 {columns.map((column, colIndex) => (
                     <React.Fragment key={colIndex}>
                         {/* Cột dữ liệu */}
-                        <ul className="space-y-1 last:mb-8">
+                        <ul className="space-y-1 mt-2 mb-3  overflow-hidden text-ellipsis">
                             {column.map((genre) => (
                                 <li key={genre.url}>
                                     <Link

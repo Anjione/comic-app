@@ -96,7 +96,7 @@ export default function Footer() {
       <div className="mt-4 mb-4 pt-4">
         <div className="txt max-w-7xl mx-auto text-center">
           <p className="text-xs leading-relaxed text-[#999]">
-            All the comics on this website are only previews of the original comics, there may be many language errors,<br></br> character names, and story lines. For the original version, please buy the comic if it's available in your city.
+            All the comics on this website are only previews of the original comics, there may be many language errors,<br></br> character names, and story lines. For the original version, please buy the comic if it&apos;s available in your city.
           </p>
         </div>
       </div>
