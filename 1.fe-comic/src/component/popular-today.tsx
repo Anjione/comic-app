@@ -64,9 +64,9 @@ export default function PopularToday({
           Popular Today
         </h2>
       </div>
-      <section className="bixbox bg-[#222222] dark:bg-[#222222] p-2 shadow">
+      <section className="bixbox bg-[#222222] p-2 shadow">
         <div
-          className={`flex justify-center sm:justify-start ${needsScroll ? "overflow-x-scroll" : ""
+          className={`flex justify-start sm:justify-start ${needsScroll ? "overflow-x-scroll" : ""
 
             } [&::-webkit-scrollbar]:h-[10px]
               [&::-webkit-scrollbar-track]:bg-[#111]
@@ -115,12 +115,12 @@ export default function PopularToday({
                   {c.colored && (
                     <div className="absolute bottom-0 left-0 z-10 p-1">
                       <span className="
-            absolute z-10 
-            bottom-[5px] left-[5px] 
-            bg-[#ebcf04] text-[rgba(0,0,0,0.7)] 
-            font-bold text-[10px] 
-            py-[2px] px-[5px] 
-            rounded-[3px] uppercase">
+                          absolute z-10 
+                          bottom-[5px] left-[5px] 
+                          bg-[#ebcf04] text-[rgba(0,0,0,0.7)] 
+                          font-bold text-[10px] 
+                          py-[2px] px-[5px] 
+                          rounded-[3px] uppercase">
                         Colored
                       </span>
                     </div>
@@ -136,7 +136,7 @@ export default function PopularToday({
 
                 {/* Chapter count */}
                 {c.chapter && (
-                  <div className={`text-sm text-[#999] dark:text-[#999] ${fira.className}`}>{c.chapter}</div>
+                  <div className={`text-sm text-[#999] ${fira.className}`}>{c.chapter}</div>
                 )}
 
                 {/* Stars */}
@@ -144,7 +144,7 @@ export default function PopularToday({
                   <div className="flex items-center">
                     <StarRating score={c.score} />
                   </div>
-                  <div className="text-xs text-[#999] dark:text-[#999]">
+                  <div className="text-xs text-[#999]">
                     {c.score}
                   </div>
                 </div>

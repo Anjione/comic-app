@@ -74,7 +74,7 @@ export default function BookmarkCard() {
 
                             {/* Chapter count */}
                             {it.chapter && (
-                                <div className={`text-sm text-[#999] dark:text-[#999] ${fira.className}`}>{it.chapter}</div>
+                                <div className={`text-sm text-[#999] ${fira.className}`}>{it.chapter}</div>
                             )}
 
                             {/* Stars */}
@@ -82,7 +82,7 @@ export default function BookmarkCard() {
                                 <div className="flex items-center">
                                     <StarRating score={it.score} />
                                 </div>
-                                <div className="text-xs text-[#999] dark:text-[#999]">
+                                <div className="text-xs text-[#999]">
                                     {it.score}
                                 </div>
                             </div>
