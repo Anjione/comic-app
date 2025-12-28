@@ -1,12 +1,11 @@
 // Thêm Image vào import
+import mangaSrc from "@/asset/manga.png";
+import manhuaSrc from "@/asset/manhua.png";
+import manhwaSrc from "@/asset/manhwa.png";
+import { fira } from "@/lib/fonts";
 import Image from "next/image";
 import Link from "next/link";
-import mangaSrc from "@/asset/manga.png";
-import manhwaSrc from "@/asset/manhwa.png";
-import manhuaSrc from "@/asset/manhua.png";
-import { fira } from "@/lib/fonts";
 import Pagination from "./pagination";
-import Divider from "./common/divider";
 
 // ... (các imports khác)
 
