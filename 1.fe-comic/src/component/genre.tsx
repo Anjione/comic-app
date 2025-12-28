@@ -32,7 +32,7 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
     text-gray-300 
     transition-colors 
     duration-200 
-    hover:text-white
+    hover:text-black
   `;
 
     const [col1, col2, col3] = chunkArray(genres);

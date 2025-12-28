@@ -6,6 +6,7 @@ import manhwaSrc from "@/asset/manhwa.png";
 import manhuaSrc from "@/asset/manhua.png";
 import { fira } from "@/lib/fonts";
 import Pagination from "./pagination";
+import Divider from "./common/divider";
 
 // ... (các imports khác)
 
@@ -65,7 +66,7 @@ export default function LatestUpdate({ items, page = 1,
   const pageItems = items.slice(start, start + pageSize);
 
   return (
-    <section className="bixbox bg-[#222222] dark:bg-[#222222] shadow">
+    <section className="bixbox bg-[#222222] shadow">
       <div className="release flex items-center justify-between">
         <h2 className="font-semibold">
           Latest Update
@@ -74,17 +75,16 @@ export default function LatestUpdate({ items, page = 1,
           View All
         </Link>
       </div>
-
       {/* Grid 2 cột */}
-      <div className="listupd grid grid-cols-1 sm:grid-cols-2 gap-4 px-2">
+      <div className="listupd grid grid-cols-1 min-[670px]:grid-cols-2 gap-0 px-2">
         {pageItems.map((c: ComicItem) => {
 
           // 1. Lấy đường dẫn icon
           const iconSrc = getTypeIcon(c.type);
 
           return (
-            <article key={c.id} className="utao styletwo flex gap-3 p-2 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-              <Link href={c.url} className="imgu relative w-[95px] sm:w-[120px] md:w-[140px] h-[140px] sm:h-[170px] rounded overflow-hidden shrink-0">
+            <article key={c.id} className="utao styletwo flex gap-3 px-2 py-4 transition border-b border-[#333]">
+              <Link href={c.url} className="imgu relative w-[110px] h-[150px] rounded overflow-hidden shrink-0">
 
                 {/* Ảnh bìa (Giữ nguyên) */}
                 <Image
@@ -122,17 +122,17 @@ export default function LatestUpdate({ items, page = 1,
 
               {/* Phần thông tin truyện còn lại (Giữ nguyên) */}
               <div className="luf flex-1 min-w-0">
-                <Link href={c.url} className="block">
+                <Link href={c.url} className="block hover:text-black transition-colors duration-300">
                   <h3 className="text-sm my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-1">
                     {c.title}
                   </h3>
                 </Link>
 
                 {c.chapters && (
-                  <ul className="mt-2 space-y-1 text-sm text-slate-700 dark:text-slate-300">
+                  <ul className="mt-2 space-y-1 text-sm text-slate-700">
                     {c.chapters.slice(0, 3).map((ch: Chapter, idx: number) => (
                       <li key={idx} className="flex justify-between items-center">
-                        <Link href={ch.url} className={`text-sm chapter-font text-[#999] dark:text-[#999] hover:text-white transition-colors duration-300 ${fira.className}`}>
+                        <Link href={ch.url} className={`text-sm chapter-font text-[#999] hover:text-white transition-colors duration-300 ${fira.className}`}>
                           {ch.title}
                         </Link>
                         <span className="text-xs text-[#999]">{ch.timeAgo ?? ch.timeago}</span>

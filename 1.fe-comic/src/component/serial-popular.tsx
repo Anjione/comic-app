@@ -18,19 +18,19 @@ type SeriesItem = {
 };
 
 const sampleWeekly: SeriesItem[] = [
-    { id: 1, rank: 1, title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-    { id: 2, rank: 2, title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
-    { id: 3, rank: 3, title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+    { id: 1, rank: 1, title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+    { id: 2, rank: 2, title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
+    { id: 3, rank: 3, title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
 ];
 
 const sampleMonthly: SeriesItem[] = [
-    { id: 4, rank: 1, title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6 },
-    { id: 5, rank: 2, title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Drama"], score: 8 },
+    { id: 4, rank: 1, title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6 },
+    { id: 5, rank: 2, title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Drama"], score: 8 },
 ];
 
 const sampleAlltime: SeriesItem[] = [
-    { id: 6, rank: 1, title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
-    { id: 7, rank: 2, title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
+    { id: 6, rank: 1, title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
+    { id: 7, rank: 2, title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
 ];
 
 type TabId = "weekly" | "monthly" | "alltime";
@@ -46,7 +46,7 @@ function tabClass(isActive: boolean) {
     // inactive: gray text, hover lighter
     return (
         `px-1 py-1 text-[12px] font-medium transition-colors rounded-sm w-1/3 ` +
-        (isActive ? "bg-black text-white" : "text-gray-400 hover:text-gray-200")
+        (isActive ? "bg-black text-white" : "text-gray-400 cursor-pointer hover:text-gray-200")
     ).trim();
 }
 
@@ -119,7 +119,7 @@ export default function SerialPopular(): JSX.Element {
                                 </div>
 
                                 <div className="flex-1 text-[12px]">
-                                    <Link href={it.href} className="w-full block">
+                                    <Link href={it.href} className="w-full block hover:text-black transition-colors duration-300">
                                         <div className="text-[13.3px] my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{it.title}</div>
                                     </Link>
 
@@ -129,7 +129,7 @@ export default function SerialPopular(): JSX.Element {
                                             <span key={g}>
                                                 <Link
                                                     href={`/genre/${g.toLowerCase()}`}
-                                                    className="text-xs text-gray-300 hover:text-white"
+                                                    className="text-xs text-gray-300 hover:text-black transition-colors duration-300"
                                                 >
                                                     {g}
                                                 </Link>
@@ -143,7 +143,7 @@ export default function SerialPopular(): JSX.Element {
                                         <div className="flex items-center">
                                             <StarRating score={it.score} />
                                         </div>
-                                        <div className="text-xs text-[#999] dark:text-[#999]">
+                                        <div className="text-xs text-[#999]">
                                             {it.score}
                                         </div>
                                     </div>

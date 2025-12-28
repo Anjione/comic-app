@@ -21,31 +21,31 @@ import { fira } from "@/lib/fonts";
 // };
 
 const sampleComedy: SeriesItem[] = [
-    { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-    { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
-    { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-    { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-    { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+    { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+    { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
+    { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+    { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+    { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
 ];
 
 const sampleHorror: SeriesItem[] = [
-    { id: 6, rank: 1, chapter: "Chapter 1", title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6 },
-    { id: 7, rank: 2, chapter: "Chapter 2", title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Drama"], score: 8 },
+    { id: 6, rank: 1, chapter: "Chapter 1", title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6 },
+    { id: 7, rank: 2, chapter: "Chapter 2", title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Drama"], score: 8 },
 ];
 
 const sampleSchoolLife: SeriesItem[] = [
-    { id: 8, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
-    { id: 9, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
+    { id: 8, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
+    { id: 9, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
 ];
 
 const sampleShotacon: SeriesItem[] = [
-    { id: 10, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
-    { id: 11, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
+    { id: 10, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
+    { id: 11, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
 ];
 
 const sampleWebComic: SeriesItem[] = [
-    { id: 12, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
-    { id: 13, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
+    { id: 12, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
+    { id: 13, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
 ];
 
 type TabId = "comedy" | "horror" | "school-life" | "shotacon" | "web-comic";
@@ -126,7 +126,7 @@ export default function Recommendation(): JSX.Element {
                                         index === 5 ? "hidden min-[1024px]:flex" : "flex"; // Dự phòng nếu có nhiều hơn 5 item
 
                         return (
-                            <article key={it.id} className={`w-full ${visibilityClass} bg-transparent rounded-md p-3 flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer`}>
+                            <article key={it.id} className={`w-full ${visibilityClass} bg-transparent rounded-md p-3 flex-col items-start gap-0 cursor-pointer`}>
                                 {/* Cover */}
                                 <Link href={it.href} className="w-full block">
                                     <article className="w-full">
@@ -143,13 +143,13 @@ export default function Recommendation(): JSX.Element {
                                 </Link>
 
                                 {/* Title */}
-                                <Link href={it.href} className="w-full block">
+                                <Link href={it.href} className="w-full block transition-colors duration-300 hover:text-[#000000]">
                                     <div className="text-sm my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{it.title}</div>
                                 </Link>
 
                                 {/* Chapter count */}
                                 {it.chapter && (
-                                    <div className={`text-sm text-[#999] dark:text-[#999] ${fira.className}`}>{it.chapter}</div>
+                                    <div className={`text-sm text-[#999] ${fira.className}`}>{it.chapter}</div>
                                 )}
 
                                 {/* Stars */}
@@ -157,7 +157,7 @@ export default function Recommendation(): JSX.Element {
                                     <div className="flex items-center">
                                         <StarRating score={it.score} />
                                     </div>
-                                    <div className="text-xs text-[#999] dark:text-[#999]">
+                                    <div className="text-xs text-[#999]">
                                         {it.score}
                                     </div>
                                 </div>
