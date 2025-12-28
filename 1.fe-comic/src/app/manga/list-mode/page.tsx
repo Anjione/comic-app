@@ -1,17 +1,11 @@
 import Genre from '@/component/genre';
-import QuickFilter from '@/component/quick-filter';
 import SearchBox from '@/component/search-box';
 import SerialPopular from '@/component/serial-popular';
 import { SAMPLE_GENRES } from '@/type/comic-info';
-import React, { Suspense } from 'react';
 import TextMangaList from './text-manga-list';
 // Vì trang này sử dụng searchParams, nên cần wrap trong Suspense nếu build static
 // Hoặc đơn giản là component trang
-export default function MangaPage({
-    searchParams,
-}: {
-    searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default function MangaPage() {
     // Lấy params order từ URL (ví dụ: ?order=popular)
     // Lưu ý: trong Next.js 15, searchParams có thể là Promise, cần check version.
     // Tuy nhiên code cơ bản như sau thường hoạt động tốt ở server component.

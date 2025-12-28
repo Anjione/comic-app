@@ -49,7 +49,7 @@ export default function BookmarkCard() {
                 <p className="text-xs font-medium text-gray-300">You can save a list of manga titles here up to 100. The list approves based on the latest update date. The list of manga is stored in a browser that you can use right now.</p>
             </div>
             <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 p-5">
-                {pageItems.map((it, index) => {
+                {pageItems.map((it) => {
                     return (
                         <article key={it.id} className={`w-full bg-transparent rounded-md flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer`}>
                             {/* Cover */}

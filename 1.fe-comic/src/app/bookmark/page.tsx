@@ -1,10 +1,8 @@
 import BookmarkCard from '@/app/bookmark/bookmark-card';
 import Genre from '@/component/genre';
-import PopularToday from '@/component/popular-today';
 import SearchBox from '@/component/search-box';
 import SerialPopular from '@/component/serial-popular';
 import { SAMPLE_GENRES } from '@/type/comic-info';
-import React from 'react';
 
 export default function BookmarkPage() {
     return (

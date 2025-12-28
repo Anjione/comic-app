@@ -1,10 +1,7 @@
-import Link from 'next/link';
-import React from 'react';
+import AlphabeticalNav from '@/component/alphabet-nav';
 import QuickFilter from '@/component/quick-filter';
 import { SERIES_DATA, SeriesItem } from '@/type/comic-info';
-import { Constants } from '@/constants';
-import Pagination from '@/component/pagination';
-import AlphabeticalNav from '@/component/alphabet-nav';
+import Link from 'next/link';
 
 
 
@@ -20,12 +17,6 @@ export default function TextMangaList() {
         { id: 7, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
         { id: 8, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
     ];
-
-    const total = bookmarks.length;
-    const totalPages = Math.max(1, Math.ceil(total / Constants.DEFAULT_PAGE_SIZE));
-    const current = Math.min(Math.max(1, Constants.DEFAULT_PAGE), totalPages);
-    const start = (current - 1) * Constants.DEFAULT_PAGE_SIZE;
-    const pageItems = bookmarks.slice(start, start + Constants.DEFAULT_PAGE_SIZE);
 
     return (
         // Thay thế div.bixbox
