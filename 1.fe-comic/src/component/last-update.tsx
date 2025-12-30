@@ -24,6 +24,21 @@ const getTypeIcon = (type: string | undefined) => {
       return null;
   }
 };
+
+const getTypeColor = (type: string | undefined) => {
+  if (!type) return "text-black"; // Màu mặc định
+  const lowerType = type.toLowerCase();
+  switch (lowerType) {
+    case 'manga':
+      return "text-black";
+    case 'manhwa':
+      return "text-[#009688]"; // Bạn có thể dùng text-[#00aaff] nếu muốn màu xanh cụ thể
+    case 'manhua':
+      return "text-[#9d4942]";
+    default:
+      return "text-black";
+  }
+};
 // ---------------------------------
 
 // (Các interface và logic phân trang giữ nguyên)
@@ -75,7 +90,7 @@ export default function LatestUpdate({ items, page = 1,
         </Link>
       </div>
       {/* Grid 2 cột */}
-      <div className="listupd grid grid-cols-1 min-[670px]:grid-cols-2 gap-0 px-2">
+      <div className="listupd grid grid-cols-1 min-[670px]:grid-cols-2 gap-0 pt-2 px-2">
         {pageItems.map((c: ComicItem) => {
 
           // 1. Lấy đường dẫn icon
@@ -102,8 +117,8 @@ export default function LatestUpdate({ items, page = 1,
                     <Image
                       src={iconSrc}
                       alt={c.type || "Manga"}
-                      width={30} // Điều chỉnh kích thước icon tại đây
-                      height={15} // Điều chỉnh kích thước icon tại đây
+                      width={25} // Điều chỉnh kích thước icon tại đây
+                      height={17} // Điều chỉnh kích thước icon tại đây
                       className="opacity-90"
                     />
                   </div>
@@ -122,21 +137,37 @@ export default function LatestUpdate({ items, page = 1,
               {/* Phần thông tin truyện còn lại (Giữ nguyên) */}
               <div className="luf flex-1 min-w-0">
                 <Link href={c.url} className="block hover:text-black transition-colors duration-300">
-                  <h3 className="text-sm my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-1">
+                  <h3 className="text-[15px] my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-1">
                     {c.title}
                   </h3>
                 </Link>
 
                 {c.chapters && (
-                  <ul className="mt-2 space-y-1 text-sm text-slate-700">
-                    {c.chapters.slice(0, 3).map((ch: Chapter, idx: number) => (
-                      <li key={idx} className="flex justify-between items-center">
-                        <Link href={ch.url} className={`text-sm chapter-font text-[#999] hover:text-white transition-colors duration-300 ${fira.className}`}>
-                          {ch.title}
-                        </Link>
-                        <span className="text-xs text-[#999]">{ch.timeAgo ?? ch.timeago}</span>
-                      </li>
-                    ))}
+                  <ul className="mt-2 space-y-1">
+                    {c.chapters.slice(0, 3).map((ch: Chapter, idx: number) => {
+                      // Lấy màu dựa trên type truyện
+                      const bulletColor = getTypeColor(c.type);
+
+                      return (
+                        <li key={idx} className="flex justify-between items-center gap-2 text-sm">
+                          <div className="flex items-center min-w-0">
+                            {/* Dấu chấm giả */}
+                            <span className={`mr-2 shrink-0 text-lg leading-none ${bulletColor}`}>•</span>
+
+                            <Link
+                              href={ch.url}
+                              className={`chapter-font text-[#999] hover:text-white transition-colors truncate ${fira.className}`}
+                            >
+                              {ch.title}
+                            </Link>
+                          </div>
+
+                          <span className={`text-[0.8rem] text-[#999] shrink-0 ${fira.className}`}>
+                            {ch.timeAgo ?? ch.timeago}
+                          </span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
 

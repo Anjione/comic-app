@@ -25,19 +25,19 @@ export default function Header() {
 
   return (
     <div className="w-full bg-[#000]">
-      <div className="centernav bound max-w-7xl mx-auto px-13">
-        <div className="flex items-center justify-between h-16">
+      <div className="centernav bound max-w-7xl mx-auto px-3 min-[1220px]:px-12">
+        <div className="flex items-center justify-between h-13 min-[890px]:h-16">
           {/* left: mobile menu button + logo */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3 m-[5px_20px_5px_0]">
+          <div className="flex items-center gap-3 min-[1016px]:gap-5">
+            <div className="flex items-center gap-1 min-[890px]:m-[10px_0]">
               {/* mobile menu button */}
               <button
                 aria-label="Open menu"
                 aria-expanded={open}
                 onClick={() => setOpen((v) => !v)}
-                className="shme p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 min-[890px]:hidden"
+                className="shme p-2 min-[890px]:hidden cursor-pointer"
               >
-                <i className="fa fa-bars" aria-hidden="true" />
+                <i className="fa fa-bars text-2xl" aria-hidden="true" />
               </button>
 
               {/* site branding (logo) */}
@@ -45,7 +45,7 @@ export default function Header() {
                 <div className="site-branding logox flex items-center gap-3">
                   <Link href="/" title="Komik25.com" className="flex items-center">
                     {/* NOTE: replace `logoSrc` with actual image URL. Using next/image */}
-                    <div className="relative w-[157px] h-[50px]">
+                    <div className="relative w-[126px] h-[40px] min-[890px]:w-[157px] min-[890px]:h-[50px]">
                       <Image
                         src={logoSrc}
                         alt="Komik25.com"
@@ -98,7 +98,7 @@ export default function Header() {
 
             {/* mobile search icon */}
             <button
-              className="srcmob md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="srcmob md:hidden p-2 cursor-pointer"
               aria-label="Open search"
               onClick={() => setShowSearch((v) => !v)}
             >
@@ -109,14 +109,14 @@ export default function Header() {
 
         {/* Mobile menu panel */}
         {open && (
-          <div className="mt-2 md:hidden" role="dialog" aria-modal="false">
-            <nav className="bg-white rounded-md p-3 shadow border">
-              <ul className="flex flex-col gap-2">
+          <div className="mt-2 min-[890px]:hidden" role="dialog" aria-modal="false">
+            <nav className="absolute top-[70px] left-0 z-[1000] w-full h-full bg-[#222]">
+              <ul className="flex flex-col m-[15px_20px_0_20px] text-[0.9rem]">
                 {NAV.map((n) => (
                   <li key={n.href}>
                     <Link
                       href={n.href}
-                      className="block px-2 py-2 rounded hover:bg-slate-50"
+                      className="block px-2 py-2 rounded hover:text-white"
                       onClick={() => setOpen(false)}
                     >
                       {n.title}
@@ -131,7 +131,7 @@ export default function Header() {
         {/* Mobile search input */}
         {showSearch && (
           <div className="mt-3 md:hidden">
-            <div className="bg-white p-2 rounded-md border shadow">
+            <div className="">
               <SearchBox
                 query={query}
                 setQuery={setQuery}
@@ -180,7 +180,7 @@ function SearchBox({
         ref={inputRef}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="search-live px-3 py-2 pr-10 border-0 rounded-[50px] w-48 md:w-64 text-sm bg-[#16151d] text-slate-900 placeholder-white focus:placeholder-[#575552] focus:outline-none"
+        className="search-live px-3 py-2 pr-10 border-0 rounded-[50px] w-48 md:w-64 text-sm bg-[#16151d] text-white placeholder-white focus:placeholder-[#575552] focus:outline-none"
         type="text"
         placeholder="Search"
         autoComplete="off"

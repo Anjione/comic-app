@@ -80,10 +80,10 @@ export default function PopularToday({
             const uniqueKey = `${c.id}-${index}`;
             const iconSrc = getTypeIcon(c.type);
             return (
-              <article key={uniqueKey} className="styletwo bg-transparent rounded-md p-3 flex flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer">
+              <article key={uniqueKey} className="styletwo bg-transparent rounded-md p-[10px] flex flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer">
                 {/* Cover */}
                 <Link href={c.url} className="relative w-full rounded overflow-hidden shrink-0">
-                  <article className="w-[140px]">
+                  <article className="w-[120px] min-[550px]:w-[146px]">
                     <div className="relative w-full aspect-[3/4]">
                       <Image
                         src={c.cover}
@@ -100,8 +100,8 @@ export default function PopularToday({
                       <Image
                         src={iconSrc}
                         alt={c.type || "Manga"}
-                        width={30} // Điều chỉnh kích thước icon tại đây
-                        height={15} // Điều chỉnh kích thước icon tại đây
+                        width={25} // Điều chỉnh kích thước icon tại đây
+                        height={17} // Điều chỉnh kích thước icon tại đây
                         className="opacity-90"
                       />
                     </div>
@@ -120,8 +120,10 @@ export default function PopularToday({
                           bg-[#ebcf04] text-[rgba(0,0,0,0.7)] 
                           font-bold text-[10px] 
                           py-[2px] px-[5px] 
-                          rounded-[3px] uppercase">
-                        Colored
+                          rounded-[3px] uppercase
+                          flex items-center gap-1">
+                        <i className="fas fa-palette" aria-hidden="true"></i>
+                        <span>Color</span>
                       </span>
                     </div>
                   )}
@@ -131,12 +133,12 @@ export default function PopularToday({
 
                 {/* Title */}
                 <Link href={c.url} className="w-full block">
-                  <div className="text-sm my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{c.title}</div>
+                  <div className="text-[13px] my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{c.title}</div>
                 </Link>
 
                 {/* Chapter count */}
                 {c.chapter && (
-                  <div className={`text-sm text-[#999] ${fira.className}`}>{c.chapter}</div>
+                  <div className={`text-[13px] text-[#999] ${fira.className}`}>{c.chapter}</div>
                 )}
 
                 {/* Stars */}
