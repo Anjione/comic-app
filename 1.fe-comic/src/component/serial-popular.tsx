@@ -5,6 +5,7 @@ import React, { JSX, useState } from "react";
 import StarRating from "./star-rating";
 import Link from "next/link";
 import Image from "next/image";
+import { fira } from "@/lib/fonts";
 
 
 type SeriesItem = {
@@ -124,12 +125,12 @@ export default function SerialPopular(): JSX.Element {
                                     </Link>
 
                                     <div className="text-xs mt-1">
-                                        <span className="text-[#999] font-medium">Genres</span>:{" "}
+                                        <span className={`text-[#999] font-medium ${fira.className}`}>Genres</span>:{" "}
                                         {it.genres.map((g, idx) => (
                                             <span key={g}>
                                                 <Link
                                                     href={`/genre/${g.toLowerCase()}`}
-                                                    className="text-xs text-gray-300 hover:text-black transition-colors duration-300"
+                                                    className={`text-xs text-gray-300 hover:text-black transition-colors duration-300 ${fira.className}`}
                                                 >
                                                     {g}
                                                 </Link>
