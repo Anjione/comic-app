@@ -1,16 +1,24 @@
-import Link from 'next/link';
-import React from 'react';
+import PaginationNumber from '@/component/common/pagination-number';
+import StarRating from '@/component/star-rating';
+import { Constants } from '@/constants';
+import { fira } from '@/lib/fonts';
+import { SeriesItem } from '@/type/comic-info';
 import Image from "next/image";
-import StarRating from '../../component/star-rating';
-import { SeriesItem } from '../../type/comic-info';
-import { fira } from "@/lib/fonts";
-import Pagination from '../../component/pagination';
-import { Constants } from '../../constants';
-import QuickFilter from '@/component/quick-filter';
+import Link from 'next/link';
 
 
+// --- Dữ liệu tĩnh cho A-Z List ---
+const ALPHABET = [
+    { char: '#', param: '.' },
+    { char: '0-9', param: '0-9' },
+    ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)).map(char => ({
+        char,
+        param: char,
+    })),
+];
 
-export default function MangaList({ order }: { order?: string | string[] }) {
+export default function AZLists({ showLetter }: { showLetter?: string | string[] }) {
+    const BASE_URL = "/az-lists";
 
     const bookmarks: SeriesItem[] = [
         { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
@@ -21,13 +29,18 @@ export default function MangaList({ order }: { order?: string | string[] }) {
         { id: 6, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
         { id: 7, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
         { id: 8, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 9, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 10, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 11, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 12, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 13, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
     ];
 
     const total = bookmarks.length;
-    const totalPages = Math.max(1, Math.ceil(total / Constants.DEFAULT_PAGE_SIZE));
+    const totalPages = Math.max(1, Math.ceil(total / 10));
     const current = Math.min(Math.max(1, Constants.DEFAULT_PAGE), totalPages);
-    const start = (current - 1) * Constants.DEFAULT_PAGE_SIZE;
-    const pageItems = bookmarks.slice(start, start + Constants.DEFAULT_PAGE_SIZE);
+    const start = (current - 1) * 10;
+    const pageItems = bookmarks.slice(start, start + 10);
 
     return (
         // Thay thế div.bixbox
@@ -36,25 +49,34 @@ export default function MangaList({ order }: { order?: string | string[] }) {
             {/* Thay thế div.releases.blog */}
             <div className="release flex items-center justify-between">
                 <h2 className="font-semibold">
-                    Manga Lists
+                    AZ Lists
                 </h2>
             </div>
-            <div
-                className="flex justify-center rounded transition-all duration-200"
-                role="tablist"
-                aria-label="Popular series range"
-            >
-                <QuickFilter order={Array.isArray(order) ? order[0] : order} />
-            </div>
-            <div
-                className="flex justify-end rounded transition-all duration-200 pr-[15px]"
-                role="tablist"
-                aria-label="Popular series range"
-            >
-                <Link href="/manga/list-mode/" className="px-2 py-1 text-[13px] font-medium transition-colors rounded-sm bg-[#333] text-white">
-                    Text mode
-                </Link>
-            </div>
+            {/* Danh sách A-Z (ul.az-list) */}
+            {/* Sử dụng flex-wrap để cuộn ngang trên di động nếu cần, hoặc grid để cố định */}
+            <ul className="flex flex-wrap justify-center sm:justify-center gap-3 p-4 list-none">
+                {ALPHABET.map((item) => (
+                    <li key={item.char} className="shrink-0">
+                        <Link
+                            href={`${BASE_URL}/?show=${item.param}`}
+                            className="
+                  block 
+                  w-8 h-8 
+                  leading-8 
+                  text-center 
+                  text-[14px] 
+                  font-semibold 
+                  bg-black text-white
+                  hover:text-[#999] 
+                  transition-colors 
+                  duration-200
+                "
+                        >
+                            {item.char}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
             <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 p-5">
                 {pageItems.map((it) => {
                     return (
@@ -98,7 +120,8 @@ export default function MangaList({ order }: { order?: string | string[] }) {
                 })}
             </div>
             {/* Pagination */}
-            <Pagination total={bookmarks.length} page={Constants.DEFAULT_PAGE} pageSize={Constants.DEFAULT_PAGE_SIZE} basePath={"/bookmark"} />
+            <PaginationNumber total={bookmarks.length} page={Constants.DEFAULT_PAGE} pageSize={10} basePath={"/az-lists"} param={`?show=${showLetter}`} />
         </div>
+
     );
 }

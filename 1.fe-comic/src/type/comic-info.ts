@@ -7,6 +7,8 @@ export type SeriesItem = {
     img: string;
     genres: string[];
     score: number; // 0-10
+    type?: string;
+    colored?: boolean;
 };
 
 export type GenreItem = {

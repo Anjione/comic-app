@@ -29,13 +29,13 @@ export default function Header() {
         <div className="flex items-center justify-between h-13 min-[890px]:h-16">
           {/* left: mobile menu button + logo */}
           <div className="flex items-center gap-3 min-[1016px]:gap-5">
-            <div className="flex items-center gap-1 min-[890px]:m-[10px_0]">
+            <div className="flex items-start gap-1 min-[890px]:m-[10px_0]">
               {/* mobile menu button */}
               <button
                 aria-label="Open menu"
                 aria-expanded={open}
                 onClick={() => setOpen((v) => !v)}
-                className="shme p-2 min-[890px]:hidden cursor-pointer"
+                className="shme p-2 min-[890px]:hidden cursor-pointer text-white pt-[12px]"
               >
                 <i className="fa fa-bars text-2xl" aria-hidden="true" />
               </button>
@@ -109,8 +109,8 @@ export default function Header() {
 
         {/* Mobile menu panel */}
         {open && (
-          <div className="mt-2 min-[890px]:hidden" role="dialog" aria-modal="false">
-            <nav className="absolute top-[70px] left-0 z-[1000] w-full h-full bg-[#222]">
+          <div className="min-[890px]:hidden" role="dialog" aria-modal="false">
+            <nav className="absolute top-[52px] left-0 z-[1000] w-full h-full bg-[#222]">
               <ul className="flex flex-col m-[15px_20px_0_20px] text-[0.9rem]">
                 {NAV.map((n) => (
                   <li key={n.href}>

@@ -1,44 +1,11 @@
 // Thêm Image vào import
-import mangaSrc from "@/asset/manga.png";
-import manhuaSrc from "@/asset/manhua.png";
-import manhwaSrc from "@/asset/manhwa.png";
 import { fira } from "@/lib/fonts";
 import Image from "next/image";
 import Link from "next/link";
 import Pagination from "./pagination";
+import { getTypeIcon, getTypeColor } from "@/lib/common-util";
 
 // ... (các imports khác)
-
-// --- HÀM HELPER ĐỂ XỬ LÝ ICON ---
-const getTypeIcon = (type: string | undefined) => {
-  if (!type) return null;
-  const lowerType = type.toLowerCase();
-  switch (lowerType) {
-    case 'manga':
-      return mangaSrc;
-    case 'manhwa':
-      return manhwaSrc;
-    case 'manhua':
-      return manhuaSrc;
-    default:
-      return null;
-  }
-};
-
-const getTypeColor = (type: string | undefined) => {
-  if (!type) return "text-black"; // Màu mặc định
-  const lowerType = type.toLowerCase();
-  switch (lowerType) {
-    case 'manga':
-      return "text-black";
-    case 'manhwa':
-      return "text-[#009688]"; // Bạn có thể dùng text-[#00aaff] nếu muốn màu xanh cụ thể
-    case 'manhua':
-      return "text-[#9d4942]";
-    default:
-      return "text-black";
-  }
-};
 // ---------------------------------
 
 // (Các interface và logic phân trang giữ nguyên)
@@ -113,7 +80,7 @@ export default function LatestUpdate({ items, page = 1,
                 {/* 💥 THAY THẾ/THÊM ICON 💥 */}
                 {iconSrc ? (
                   // Hiển thị Icon ảnh ở góc trên bên trái
-                  <div className="absolute top-0 right-0 z-10 p-1">
+                  <div className="absolute top-0 right-0 z-10 p-[5px] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
                     <Image
                       src={iconSrc}
                       alt={c.type || "Manga"}
@@ -137,7 +104,7 @@ export default function LatestUpdate({ items, page = 1,
               {/* Phần thông tin truyện còn lại (Giữ nguyên) */}
               <div className="luf flex-1 min-w-0">
                 <Link href={c.url} className="block hover:text-black transition-colors duration-300">
-                  <h3 className="text-[15px] my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-1">
+                  <h3 className="text-[15px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-1">
                     {c.title}
                   </h3>
                 </Link>

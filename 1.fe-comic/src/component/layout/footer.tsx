@@ -41,10 +41,10 @@ export default function Footer() {
 
   return (
     // Thay thế div.footercopyright
-    <footer className="bg-[#222222] text-gray-400 p-4 pt-6">
+    <footer className="bg-[#222222] text-gray-400 p-4 pt-0 min-[800px]:pt-6">
 
       {/* Thay thế div.footer-az */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto hidden min-[800px]:block">
 
         {/* Tiêu đề và Mô tả */}
         <div className="mb-4 flex items-baseline flex-wrap justify-center">
@@ -71,10 +71,10 @@ export default function Footer() {
                 href={`${BASE_URL}?show=${item.param}`}
                 className="
                   block 
-                  w-6 h-8 
+                  w-8 h-8 
                   leading-8 
                   text-center 
-                  text-xs 
+                  text-[14px] 
                   font-semibold 
                   bg-black text-white
                   hover:text-[#999] 
@@ -93,10 +93,10 @@ export default function Footer() {
       {/* Clear Div không cần thiết trong Flex/Grid hiện đại, sử dụng margin/padding */}
 
       {/* Thay thế div.copyright */}
-      <div className="mt-4 mb-4 pt-4">
+      <div className="mt-0 mb-5 pt-1 min-[800px]:mt-4 min-[800px]:pt-4">
         <div className="txt max-w-7xl mx-auto text-center">
-          <p className="text-xs leading-relaxed text-[#999]">
-            All the comics on this website are only previews of the original comics, there may be many language errors,<br></br> character names, and story lines. For the original version, please buy the comic if it&apos;s available in your city.
+          <p className="indent-5 text-[12.5px] leading-relaxed text-[#a3a3a3]">
+            All the comics on this website are only previews of the original comics, there may be many language errors, character names, and story lines. For the original version, please buy the comic if it&apos;s available in your city.
           </p>
         </div>
       </div>
