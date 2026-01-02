@@ -272,7 +272,7 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <div className="max-w-7xl m-[35px_auto] min-[800px]:px-5 min-[1226px]:px-12 flex flex-col gap-4">
+      <div className="max-w-7xl m-[35px_auto] mb-[160px] min-[800px]:mb-[35px] min-[800px]:px-5 min-[1226px]:px-12 flex flex-col gap-4">
         <div className="">
           <PopularToday items={popularMock} maxVisible={7} />
         </div>

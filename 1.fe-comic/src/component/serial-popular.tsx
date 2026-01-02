@@ -102,7 +102,7 @@ export default function SerialPopular(): JSX.Element {
                                     {it.rank}
                                 </div>
 
-                                <div className="w-[58px] h-[77px] flex-shrink-0 overflow-hidden rounded">
+                                <div className="w-[58px] h-[73px] flex-shrink-0 overflow-hidden rounded">
                                     {/* If using Next.js Image, replace with next/image for optimization */}
                                     <Link href={it.href} className="w-full block">
                                         <article className="w-[100px]">
@@ -121,7 +121,7 @@ export default function SerialPopular(): JSX.Element {
 
                                 <div className="flex-1 text-[12px]">
                                     <Link href={it.href} className="w-full block hover:text-black transition-colors duration-300">
-                                        <div className="text-[13.3px] my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{it.title}</div>
+                                        <div className="text-[13.3px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{it.title}</div>
                                     </Link>
 
                                     <div className="text-xs mt-1">

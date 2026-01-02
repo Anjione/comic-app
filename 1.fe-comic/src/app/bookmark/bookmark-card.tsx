@@ -1,5 +1,6 @@
+"use client";
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import Image from "next/image";
 import StarRating from '../../component/star-rating';
 import { SeriesItem } from '../../type/comic-info';
@@ -12,21 +13,30 @@ import { Constants } from '../../constants';
 export default function BookmarkCard() {
 
     const bookmarks: SeriesItem[] = [
-        { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
-        { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 6, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 7, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 8, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
+        { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 6, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 7, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 8, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
     ];
+
+    const [list, setList] = useState(bookmarks); // Giả định bookmarks là mảng mẫu của bạn
+    const [isEditMode, setIsEditMode] = useState(false);
+
+    const handleDeleteItem = (e: React.MouseEvent, id: number) => {
+        e.preventDefault(); // Ngăn việc nhấn nút xóa bị nhảy vào Link truyện
+        setList(list.filter(item => item.id !== id));
+    };
+
 
     const total = bookmarks.length;
     const totalPages = Math.max(1, Math.ceil(total / Constants.DEFAULT_PAGE_SIZE));
     const current = Math.min(Math.max(1, Constants.DEFAULT_PAGE), totalPages);
     const start = (current - 1) * Constants.DEFAULT_PAGE_SIZE;
-    const pageItems = bookmarks.slice(start, start + Constants.DEFAULT_PAGE_SIZE);
+    const pageItems = list.slice(start, start + Constants.DEFAULT_PAGE_SIZE);
 
     return (
         // Thay thế div.bixbox
@@ -37,7 +47,7 @@ export default function BookmarkCard() {
                 <h2 className="font-semibold">
                     Bookmark
                 </h2>
-                <button className="px-5 py-[2px] text-[13px] font-medium transition-colors rounded-sm bg-[#e53327] text-white">
+                <button onClick={() => setIsEditMode(!isEditMode)} className="px-5 py-[2px] text-[13px] font-medium transition-colors rounded-sm bg-[#e53327] text-white cursor-pointer">
                     Delete
                 </button>
             </div>
@@ -48,23 +58,30 @@ export default function BookmarkCard() {
             >
                 <p className="text-xs font-medium text-gray-300">You can save a list of manga titles here up to 100. The list approves based on the latest update date. The list of manga is stored in a browser that you can use right now.</p>
             </div>
-            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 p-5">
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 p-5">
                 {pageItems.map((it) => {
                     return (
-                        <article key={it.id} className={`w-full bg-transparent rounded-md flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer`}>
-                            {/* Cover */}
-                            <Link href={it.href} className="w-full block">
-                                <article className="w-full">
-                                    <div className="relative w-full aspect-[3/4]">
-                                        <Image
-                                            src={it.img}
-                                            fill
-                                            alt={it.title}
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                </article>
+                        <article key={it.id} className={`relative w-full bg-transparent rounded-md flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer`}>
+                            {/* Nút X nhỏ hiển thị khi nhấn Delete chính */}
+                            {isEditMode && (
+                                <div
+                                    onClick={(e) => handleDeleteItem(e, it.id)}
+                                    className="absolute z-[10] cursor-pointer top-0 right-0 text-white text-[13px] px-[5px] py-[2px] bg-[#e53427]"
+                                >
+                                    Delete
+                                </div>
+                            )}
 
+                            {/* Cover Area */}
+                            <Link href={it.href} className="w-full block">
+                                <div className="relative w-full aspect-[3/4]">
+                                    <Image
+                                        src={it.img}
+                                        fill
+                                        alt={it.title}
+                                        className="object-cover rounded-sm"
+                                    />
+                                </div>
                             </Link>
 
                             {/* Title */}

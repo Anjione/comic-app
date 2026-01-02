@@ -66,7 +66,7 @@ export default function PopularToday({
       </div>
       <section className="bixbox bg-[#222222] p-2 shadow">
         <div
-          className={`flex justify-start sm:justify-start ${needsScroll ? "overflow-x-scroll" : ""
+          className={`flex justify-start sm:justify-start pb-5 ${needsScroll ? "overflow-x-scroll" : ""
 
             } [&::-webkit-scrollbar]:h-[10px]
               [&::-webkit-scrollbar-track]:bg-[#111]
@@ -96,7 +96,7 @@ export default function PopularToday({
                   {/* 💥 THAY THẾ/THÊM ICON 💥 */}
                   {iconSrc ? (
                     // Hiển thị Icon ảnh ở góc trên bên trái
-                    <div className="absolute top-0 right-0 z-10 p-1">
+                    <div className="absolute top-0 right-0 z-10 p-[5px] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
                       <Image
                         src={iconSrc}
                         alt={c.type || "Manga"}

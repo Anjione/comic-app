@@ -1,5 +1,7 @@
+"use client";
 import Link from 'next/link';
 import React from 'react';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 // Định nghĩa Interface cho mỗi mục Thể loại
 interface GenreItem {
@@ -13,13 +15,14 @@ interface GenreProps {
     title?: string;
 }
 
-const chunkArray = (arr: GenreItem[]): GenreItem[][] => {
-    const size = Math.ceil(arr.length / 3);
-    return [
-        arr.slice(0, size),
-        arr.slice(size, size * 2),
-        arr.slice(size * 2),
-    ];
+// Hàm chunkArray linh hoạt
+const chunkArray = (arr: GenreItem[], size: number) => {
+    if (!arr) return [];
+    const result = [];
+    for (let i = 0; i < arr.length; i += Math.ceil(arr.length / size)) {
+        result.push(arr.slice(i, i + Math.ceil(arr.length / size)));
+    }
+    return result.slice(0, size); // Đảm bảo luôn trả về đúng số cột mong muốn
 };
 
 export default function Genre({ genres, title = 'Genre' }: GenreProps) {
@@ -34,9 +37,12 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
     duration-200 
     hover:text-black
   `;
+    const windowWidth = useWindowSize();
 
-    const [col1, col2, col3] = chunkArray(genres);
-    const columns = [col1, col2, col3];
+    // Logic chia cột dựa trên breakpoint 880px bạn đã cài trong config
+    // Nếu width < 880 thì chia 2, ngược lại chia 3
+    const columnCount = windowWidth < 880 ? 2 : 3;
+    const columns = chunkArray(genres, columnCount);
 
     // Style cho đường kẻ dọc
     const dividerClasses = "w-[1px] h-full bg-[#312f40]";
@@ -53,29 +59,31 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
             </div>
 
             {/* 💥 Cấu trúc GRID 3 CỘT với DIVIDER 💥 */}
-            <div className="w-full grid grid-cols-[1fr_auto_1fr_auto_1fr] relative px-3">
-
+            <div className={`w-full grid relative px-3 
+    ${columnCount === 2
+                    ? 'grid-cols-2'
+                    : 'grid-cols-[1fr_auto_1fr_auto_1fr]'
+                }`}
+            >
                 {columns.map((column, colIndex) => (
                     <React.Fragment key={colIndex}>
                         {/* Cột dữ liệu */}
-                        <ul className="space-y-1 mt-2 mb-3  overflow-hidden text-ellipsis">
+                        <ul className="space-y-1 mt-2 mb-3 overflow-hidden text-ellipsis">
                             {column.map((genre) => (
                                 <li key={genre.url}>
-                                    <Link
-                                        href={genre.url}
-                                        title={`Xem tất cả truyện thuộc ${genre.name}`}
-                                        className={tagClasses}
-                                    >
+                                    <Link href={genre.url} className={tagClasses}>
                                         {genre.name}
                                     </Link>
                                 </li>
                             ))}
                         </ul>
 
-                        {/* Đường kẻ dọc giữa các cột */}
-                        {/* Chỉ hiển thị divider nếu KHÔNG phải cột cuối cùng (index 0 và 1) */}
+                        {/* Divider logic */}
                         {colIndex < columns.length - 1 && (
-                            <div className={`mx-2 ${dividerClasses}`} aria-hidden="true" />
+                            <div
+                                className={`${columnCount === 2 ? 'hidden' : 'block'} mx-2 border-l border-[#312f40] h-[100%] self-center`}
+                                aria-hidden="true"
+                            />
                         )}
                     </React.Fragment>
                 ))}
