@@ -83,6 +83,11 @@ export default function QuickFilter({ order }: { order?: string }) {
 
     // Hàm đếm số lượng mục đang được lọc (Checked + Excluded)
     const filterCount = Object.keys(genreStates).length;
+    let selectedLabel: string | undefined;
+
+    if (filterCount === 1) {
+        selectedLabel = SAMPLE_GENRES.find((item) => genreStates[item.id] === 1 || genreStates[item.id] === 2)?.name || undefined;
+    }
 
     // Click ra ngoài thì đóng dropdown (Optional - nâng cao trải nghiệm)
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -101,13 +106,13 @@ export default function QuickFilter({ order }: { order?: string }) {
             <form onSubmit={handleSearch} className="flex flex-wrap items-center gap-2">
 
                 {/* --- 1. DROPDOWN GENRE (Phức tạp nhất) --- */}
-                <div className="w-[calc(50%-0.5rem)] min-[928px]:w-[20%]">
+                <div className="w-[calc(50%-0.3rem)] min-[928px]:w-[19%]">
                     <button
                         type="button"
-                        className={`w-full flex justify-center items-center gap-1 px-2 py-1 rounded bg-[#333] text-xs text-gray-200 hover:bg-black/20 transition-colors border ${activeDropdown === 'genre' ? 'border-yellow-500' : 'border-transparent'}`}
+                        className={`w-full flex justify-center items-center gap-1 px-2 py-1 rounded bg-[#333] text-xs text-[#ccc] hover:bg-gray-200 hover:text-black transition-colors`}
                         onClick={() => toggleDropdown("genre")}
                     >
-                        Genre <span className="bg-black text-gray-400 text-xs px-1.5 rounded font-bold">{filterCount || "All"}</span>
+                        Genre {filterCount === 1 ? selectedLabel : filterCount || "All"}
                         <i className={`fa-solid fa-angle-down transition-transform ${activeDropdown === 'genre' ? 'rotate-180' : ''}`}></i>
                     </button>
 
@@ -116,7 +121,7 @@ export default function QuickFilter({ order }: { order?: string }) {
                         <div className="absolute top-full left-0 mx-3 w-[97%] bg-[#333] border border-gray-700 rounded shadow-xl z-50 p-4">
                             {/* ... Nút Chọn/Bỏ Chọn Tất Cả (Tùy chọn) ... */}
 
-                            <ul className="grid grid-cols-2 md:grid-cols-4 gap-2 max-h-[400px] overflow-y-auto custom-scrollbar
+                            <ul className="grid grid-cols-2 md:grid-cols-5 gap-2 max-h-[400px] overflow-y-auto custom-scrollbar
                                     [&::-webkit-scrollbar]:w-[5px]
                                     [&::-webkit-scrollbar-track]:bg-[#333]
                                     [&::-webkit-scrollbar-thumb]:bg-[#111]
@@ -134,7 +139,7 @@ export default function QuickFilter({ order }: { order?: string }) {
                                                 {/* Đây là vị trí của icon Font Awesome (::before trong CSS) */}
                                                 <span className="checkbox-icon"></span>
 
-                                                <span className="text-gray-300 text-sm hover:text-white truncate">
+                                                <span className="text-[#ccc] text-[13px] hover:text-white truncate">
                                                     {item.name}
                                                 </span>
                                             </div>
@@ -177,7 +182,7 @@ export default function QuickFilter({ order }: { order?: string }) {
                 />
 
                 {/* --- BUTTON SEARCH --- */}
-                <button type="submit" className="w-full min-[928px]:w-[16%] bg-black text-white text-xs font-bold px-2 py-1 rounded flex justify-center items-center gap-1 transition-colors border border-black">
+                <button type="submit" className="w-full min-[928px]:w-[19%] bg-black text-white text-xs hover:bg-[#333] hover:text-white hover:border-[#333] transition-colors px-2 py-1 rounded flex justify-center items-center gap-1 transition-colors border border-black cursor-pointer">
                     <i className="fa-solid fa-search"></i> Search
                 </button>
 
@@ -216,13 +221,13 @@ function FilterDropdown({ title, active, onToggle, currentValue, options, onSele
     }
 
     return (
-        <div className="relative w-[calc(50%-0.5rem)] min-[928px]:w-[20%]">
+        <div className="relative w-[calc(50%-0.3rem)] min-[928px]:w-[19%]">
             <button
                 type="button"
-                className={`w-full flex justify-center items-center gap-1 px-1 py-1 rounded text-xs hover:bg-gray-200 hover:text-black transition-colors border border-transparent ${active ? 'bg-gray-200 text-black' : 'bg-[#333] text-gray-200'}`}
+                className={`w-full flex justify-center items-center gap-1 px-1 py-1 rounded text-xs text-[#ccc] hover:bg-gray-200 hover:text-black transition-colors border border-transparent ${active ? 'bg-gray-200 text-black' : 'bg-[#333]'} cursor-pointer`}
                 onClick={onToggle}
             >
-                {title} <span className="text-gray-400 text-xs px-1">({selectedLabel})</span>
+                {title} {selectedLabel}
                 <i className={`fa-solid fa-angle-down transition-transform ${active ? 'rotate-180' : ''}`}></i>
             </button>
 
@@ -247,7 +252,7 @@ function FilterDropdown({ title, active, onToggle, currentValue, options, onSele
                                     {/* Icon Font Awesome (được định nghĩa trong globals.css) */}
                                     <span className="checkbox-icon"></span>
 
-                                    <span className={`text-sm ${isChecked ? 'text-yellow-500 font-bold' : 'text-gray-300'}`}>
+                                    <span className={`text-sm text-gray-300`}>
                                         {opt.label}
                                     </span>
                                 </div>

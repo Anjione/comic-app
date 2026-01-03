@@ -7,20 +7,21 @@ import { SeriesItem } from '../../type/comic-info';
 import { fira } from "@/lib/fonts";
 import Pagination from '../../component/pagination';
 import { Constants } from '../../constants';
+import { getTypeIcon } from '@/lib/common-util';
 
 
 
 export default function BookmarkCard() {
 
     const bookmarks: SeriesItem[] = [
-        { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
-        { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 6, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 7, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-        { id: 8, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+        { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
+        { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7, type: "Manga", colored: true },
+        { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
+        { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
+        { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
+        { id: 6, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
+        { id: 7, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
+        { id: 8, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
     ];
 
     const [list, setList] = useState(bookmarks); // Giả định bookmarks là mảng mẫu của bạn
@@ -58,8 +59,9 @@ export default function BookmarkCard() {
             >
                 <p className="text-xs font-medium text-gray-300">You can save a list of manga titles here up to 100. The list approves based on the latest update date. The list of manga is stored in a browser that you can use right now.</p>
             </div>
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4 p-5">
+            <div className="grid grid-cols-3 min-[670px]:grid-cols-5 gap-4 p-5">
                 {pageItems.map((it) => {
+                    const iconSrc = getTypeIcon(it.type);
                     return (
                         <article key={it.id} className={`relative w-full bg-transparent rounded-md flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer`}>
                             {/* Nút X nhỏ hiển thị khi nhấn Delete chính */}
@@ -81,6 +83,40 @@ export default function BookmarkCard() {
                                         alt={it.title}
                                         className="object-cover rounded-sm"
                                     />
+                                    {/* 💥 THAY THẾ/THÊM ICON 💥 */}
+                                    {iconSrc ? (
+                                        // Hiển thị Icon ảnh ở góc trên bên trái
+                                        <div className="absolute top-0 right-0 z-10 p-[5px] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
+                                            <Image
+                                                src={iconSrc}
+                                                alt={it.type || "Manga"}
+                                                width={25} // Điều chỉnh kích thước icon tại đây
+                                                height={17} // Điều chỉnh kích thước icon tại đây
+                                                className="opacity-90"
+                                            />
+                                        </div>
+                                    ) : (
+                                        // Nếu không có icon ảnh, hiển thị text cũ (hoặc không hiển thị gì)
+                                        // Tôi giữ lại span text cũ nếu không tìm thấy icon để đảm bảo tính an toàn
+                                        <span className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-0.5 rounded">
+                                            {it.type ?? "Manga"}
+                                        </span>
+                                    )}
+                                    {it.colored && (
+                                        <div className="absolute bottom-0 left-0 z-10 p-1">
+                                            <span className="
+                                                          absolute z-10 
+                                                          bottom-[5px] left-[5px] 
+                                                          bg-[#ebcf04] text-[rgba(0,0,0,0.7)] 
+                                                          font-bold text-[10px] 
+                                                          py-[2px] px-[5px] 
+                                                          rounded-[3px] uppercase
+                                                          flex items-center gap-1">
+                                                <i className="fas fa-palette" aria-hidden="true"></i>
+                                                <span>Color</span>
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </Link>
 

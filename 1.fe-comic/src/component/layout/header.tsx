@@ -85,7 +85,7 @@ export default function Header() {
           {/* right: search / mobile search icon */}
           <div className="flex items-center gap-3">
             {/* desktop search */}
-            <div className="searchx hidden w-1/2 min-[1016px]:w-full md:flex items-center">
+            <div className="searchx hidden w-1/2 min-[1016px]:w-full min-[570px]:flex items-center">
               <SearchBox
                 query={query}
                 setQuery={setQuery}
@@ -98,7 +98,7 @@ export default function Header() {
 
             {/* mobile search icon */}
             <button
-              className="srcmob md:hidden p-2 cursor-pointer"
+              className="srcmob z-15 min-[570px]:hidden p-2 cursor-pointer font-black text-[14px]"
               aria-label="Open search"
               onClick={() => setShowSearch((v) => !v)}
             >
@@ -130,7 +130,7 @@ export default function Header() {
 
         {/* Mobile search input */}
         {showSearch && (
-          <div className="mt-3 md:hidden">
+          <div className="min-[570px]:hidden">
             <div className="">
               <SearchBox
                 query={query}
@@ -180,7 +180,7 @@ function SearchBox({
         ref={inputRef}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="search-live px-3 py-2 pr-10 border-0 rounded-[50px] w-48 md:w-64 text-sm bg-[#16151d] text-white placeholder-white focus:placeholder-[#575552] focus:outline-none"
+        className="search-live px-3 py-2 pr-10 border-0 rounded-[50px] w-full min-[570px]:w-64 text-sm bg-[#16151d] text-white placeholder-white focus:placeholder-[#575552] focus:outline-none absolute top-[-45px] right-0 z-10 min-[570px]:static min-[570px]:inset-auto min-[570px]:z-auto"
         type="text"
         placeholder="Search"
         autoComplete="off"
@@ -191,7 +191,7 @@ function SearchBox({
         type="submit"
         id="submit"
         aria-label="Search"
-        className="cursor-pointer absolute right-1 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-md bg-transparent text-sm hover:bg-transparent focus:outline-none"
+        className="hidden min-[570px]:block cursor-pointer absolute right-1 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-md bg-transparent text-sm hover:bg-transparent focus:outline-none"
       >
         <i className="fas fa-search font-bold text-[#575552]" aria-hidden />
       </button>
