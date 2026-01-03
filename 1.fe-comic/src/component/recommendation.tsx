@@ -114,7 +114,7 @@ export default function Recommendation(): JSX.Element {
                 </div>
 
                 {/* Content */}
-                <div className="grid grid-cols-2 min-[480px]:grid-cols-3 min-[650px]:grid-cols-4 min-[768px]:grid-cols-5">
+                <div className="grid grid-cols-3 min-[650px]:grid-cols-4 min-[768px]:grid-cols-5">
                     {items.map((it, index) => {
                         // Logic ẩn hiện:
                         // - Luôn hiện 3 item đầu

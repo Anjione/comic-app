@@ -16,7 +16,7 @@ export default function SearchBox() {
                 role="search"
                 method="get"
                 id="searchform"
-                className="bg-[#222] flex flex-row min-[880px]:flex-col min-[1080px]:flex-row gap-2 py-3 px-10 items-center justify-center box-border w-full"
+                className="bg-[#222] flex flex-row min-[1024px]:flex-col min-[1080px]:flex-row gap-2 py-3 px-10 items-center justify-center box-border w-full"
                 action="https://komik25.com/"
             >
                 <input
@@ -25,7 +25,7 @@ export default function SearchBox() {
                     name="s"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="h-8 w-[185px] min-[880px]:w-full text-[#000] bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none"
+                    className="h-8 w-[185px] min-[1024px]:w-full text-[#000] bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none"
                 />
                 <button
                     type="submit"

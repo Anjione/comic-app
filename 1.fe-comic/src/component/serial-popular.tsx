@@ -1,12 +1,11 @@
 // components/PopularSeriesWidget.tsx
 "use client";
 
-import React, { JSX, useState } from "react";
-import StarRating from "./star-rating";
-import Link from "next/link";
-import Image from "next/image";
 import { fira } from "@/lib/fonts";
-
+import Image from "next/image";
+import Link from "next/link";
+import { JSX, useState } from "react";
+import StarRating from "./star-rating";
 
 type SeriesItem = {
     id: number;
@@ -20,17 +19,17 @@ type SeriesItem = {
 
 const sampleWeekly: SeriesItem[] = [
     { id: 1, rank: 1, title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-    { id: 2, rank: 2, title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7 },
-    { id: 3, rank: 3, title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+    { id: 2, rank: 2, title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1590796583326-afd3bb20d22d?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Action", "Fantasy"], score: 7 },
+    { id: 3, rank: 3, title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
 ];
 
 const sampleMonthly: SeriesItem[] = [
     { id: 4, rank: 1, title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6 },
-    { id: 5, rank: 2, title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Drama"], score: 8 },
+    { id: 5, rank: 2, title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1611457194403-d3aca4cf9d11?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Drama"], score: 8 },
 ];
 
 const sampleAlltime: SeriesItem[] = [
-    { id: 6, rank: 1, title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action"], score: 9 },
+    { id: 6, rank: 1, title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action"], score: 9 },
     { id: 7, rank: 2, title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
 ];
 
@@ -59,7 +58,7 @@ export default function SerialPopular(): JSX.Element {
     return (
         <section aria-labelledby="popular-series-heading" className="w-full">
             <div className="release px-4 py-2">
-                <h2 id="popular-series-heading" className="font-semibold">Serial Popular</h2>
+                <h2 id="popular-series-heading" className="font-semibold">Serial Populer</h2>
             </div>
 
             <div className="bg-[#222] max-w-7xl mx-auto text-[12px] rounded">
@@ -102,20 +101,16 @@ export default function SerialPopular(): JSX.Element {
                                     {it.rank}
                                 </div>
 
-                                <div className="w-[58px] h-[73px] flex-shrink-0 overflow-hidden rounded">
-                                    {/* If using Next.js Image, replace with next/image for optimization */}
-                                    <Link href={it.href} className="w-full block">
-                                        <article className="w-[100px]">
-                                            <div className="relative w-full aspect-[1/1] rounded overflow-hidden">
-                                                <Image
-                                                    src={it.img}
-                                                    fill
-                                                    alt={it.title}
-                                                    className="object-cover"
-                                                />
-                                            </div>
-                                        </article>
-
+                                <div className="w-[58px] h-[73px] flex-shrink-0 relative rounded overflow-hidden">
+                                    <Link href={it.href} className="w-full h-full block">
+                                        <Image
+                                            src={it.img}
+                                            alt={it.title}
+                                            fill
+                                            sizes="58px"
+                                            className="object-cover object-center" // Đảm bảo căn giữa
+                                            priority={it.rank <= 3} // Tối ưu load cho top 3
+                                        />
                                     </Link>
                                 </div>
 
