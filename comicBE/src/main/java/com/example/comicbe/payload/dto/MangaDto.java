@@ -1,5 +1,6 @@
 package com.example.comicbe.payload.dto;
 
+import com.example.comicbe.constant.MangaCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class MangaDto implements Serializable {
     private String lastChapter;
     private String modifiedBy;
     private String createdBy;
+    private MangaCategory mangaCategory;
 
     private List<ChapterDto> chapters;
 

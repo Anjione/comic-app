@@ -1,4 +1,4 @@
-package com.example.comicbe.entity;
+package com.example.comicbe.jpa.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Chapter extends BaseEntity{
     private String chapterName;
     private String chapterCode;
-    private String chapterNumber;
+    private Double chapterNumber;
 
     @Column(columnDefinition = "longtext")
     private String chapterImages;

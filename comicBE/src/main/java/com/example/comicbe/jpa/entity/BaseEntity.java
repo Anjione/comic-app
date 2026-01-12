@@ -1,4 +1,4 @@
-package com.example.comicbe.entity;
+package com.example.comicbe.jpa.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -8,7 +8,7 @@ CREATE TABLE `chapter` (
                            `chapter_code` varchar(255) DEFAULT NULL,
                            `chapter_images` longtext DEFAULT NULL,
                            `chapter_name` varchar(255) DEFAULT NULL,
-                           `chapter_number` varchar(255) DEFAULT NULL,
+                           `chapter_number` DOUBLE DEFAULT NULL,
                            `created_by` varchar(255) DEFAULT NULL,
                            `modified_by` varchar(255) DEFAULT NULL,
                            PRIMARY KEY (`id`),
@@ -50,3 +50,8 @@ CREATE TABLE `upload_transaction` (
                                       `patch` varchar(255) DEFAULT NULL,
                                       PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+ALTER TABLE comic.manga ADD manga_category varchar(100) NULL;
+ALTER TABLE articles
+    ADD FULLTEXT idx_ft_title_content (title, content);

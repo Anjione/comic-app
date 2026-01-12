@@ -1,6 +1,6 @@
 package com.example.comicbe.service.craw;
 
-import com.example.comicbe.entity.Manga;
+import com.example.comicbe.jpa.entity.Manga;
 import com.example.comicbe.payload.dto.ChapterDto;
 import com.example.comicbe.payload.dto.MangaDto;
 import com.example.comicbe.service.MangaService;

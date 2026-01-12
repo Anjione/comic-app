@@ -1,10 +1,10 @@
 package com.example.comicbe.service.craw;
 
-import com.example.comicbe.entity.Chapter;
-import com.example.comicbe.entity.ChapterImages;
-import com.example.comicbe.entity.Manga;
+import com.example.comicbe.jpa.entity.Chapter;
+import com.example.comicbe.jpa.entity.ChapterImages;
+import com.example.comicbe.jpa.entity.Manga;
 import com.example.comicbe.payload.dto.ChapterDto;
-import com.example.comicbe.repository.ChapterRepository;
+import com.example.comicbe.jpa.repository.ChapterRepository;
 import com.example.comicbe.utils.ConvertUtils;
 import com.example.comicbe.utils.ToolDownload;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -174,7 +174,7 @@ public class ChapterCrawlerService {
 
                     chapter.setChapterCode(UUID.randomUUID().toString());
                     chapter.setChapterName(chapterTitle);
-                    chapter.setChapterNumber(dataNum);
+                    chapter.setChapterNumber(Double.valueOf(dataNum));
                     chapter.setManga(manga);
 
                     // Xử lý ảnh trong chapter
@@ -197,6 +197,26 @@ public class ChapterCrawlerService {
         List<Chapter> chapters = futures.stream()
                 .map(CompletableFuture::join)
                 .filter(Objects::nonNull)
+                .sorted((c1, c2) -> {
+//                    String s1 = c1.getChapterNumber();
+//                    String s2 = c2.getChapterNumber();
+//
+//                    boolean isNum1 = s1.matches("\\d+");
+//                    boolean isNum2 = s2.matches("\\d+");
+
+                    // cả hai là số
+//                    if (isNum1 && isNum2) {
+//                        return Integer.compare(Integer.parseInt(s1), Integer.parseInt(s2));
+//                    }
+
+//                    // số đứng trước chữ
+//                    if (isNum1) return -1;
+//                    if (isNum2) return 1;
+//
+//                    // cả hai là chữ
+//                    return s1.compareToIgnoreCase(s2);
+                    return Double.compare(c1.getChapterNumber(), c2.getChapterNumber());
+                })
                 .toList();
 
         chapterRepository.saveAll(chapters);
@@ -225,7 +245,7 @@ public class ChapterCrawlerService {
 
                         chapter.setChapterCode(UUID.randomUUID().toString());
                         chapter.setChapterName(chapterTitle);
-                        chapter.setChapterNumber(dataNum);
+                        chapter.setChapterNumber(Double.valueOf(dataNum));
 
                         List<ChapterImages> chapterImages = this.processImagesInChapter(url, chapterTitle, mangaName);
                         chapter.setChapterImages(mapper.writeValueAsString(chapterImages));

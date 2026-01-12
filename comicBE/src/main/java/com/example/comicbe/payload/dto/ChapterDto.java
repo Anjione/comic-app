@@ -5,14 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChapterDto implements Serializable {
+    private Long id;
     private String title;
     private String chapterName;
     private String chapterUrl;
-    private String chapterNumber;
+    private Double chapterNumber;
+
+    List<ChapterImagesDto> images;
 //    private String createdDate;
 }
