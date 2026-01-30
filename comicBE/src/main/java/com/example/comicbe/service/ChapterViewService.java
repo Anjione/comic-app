@@ -1,5 +1,7 @@
 package com.example.comicbe.service;
 
+import com.example.comicbe.jpa.entity.Manga;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -21,4 +23,6 @@ public interface ChapterViewService {
     void clearView(Long mangaId);
 
     void rebuildTotalView();
+
+    void syncView(Manga manga);
 }

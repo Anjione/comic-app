@@ -1,6 +1,5 @@
 package com.example.comicbe.jpa.entity;
 
-import com.example.comicbe.constant.MangaCategory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +21,17 @@ public class Manga extends BaseEntity{
     private String author;
     private Long totalView;
     private Double rating;
-    private MangaCategory mangaCategory;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private MangaCategory category;
+
+    @ManyToMany
+    @JoinTable(
+            name = "manga_genre",
+            joinColumns = @JoinColumn(name = "manga_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<MangaGenre> genres;
 
     @OneToMany(mappedBy = "manga", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private Set<Chapter> chapters;

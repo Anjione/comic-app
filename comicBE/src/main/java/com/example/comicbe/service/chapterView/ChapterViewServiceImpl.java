@@ -85,11 +85,11 @@ public class ChapterViewServiceImpl implements ChapterViewService {
                     (RedisSerializer<String>) redisTemplate.getStringSerializer();
             byte[] member = serializer.serialize(String.valueOf(mangaId));
 
-            connection.zIncrBy(dayKey.getBytes(), 1, member);
-            connection.zIncrBy(weekKey.getBytes(), 1, member);
-            connection.zIncrBy(monthKey.getBytes(), 1, member);
-            connection.zIncrBy(yearKey.getBytes(), 1, member);
-            connection.zIncrBy(totalKey.getBytes(), 1, member);
+            connection.zIncrBy(serializer.serialize(dayKey), 1, member);
+            connection.zIncrBy(serializer.serialize(weekKey), 1, member);
+            connection.zIncrBy(serializer.serialize(monthKey), 1, member);
+            connection.zIncrBy(serializer.serialize(yearKey), 1, member);
+            connection.zIncrBy(serializer.serialize(totalKey), 1, member);
             return null;
         });
     }
@@ -230,7 +230,7 @@ public class ChapterViewServiceImpl implements ChapterViewService {
         }
 
         for (Future<?> f : futures) {
-            f.get(); // chờ tất cả hoàn thành
+            f.get();
         }
 
 //        List<String> keys = mangaIds.stream()
@@ -283,18 +283,23 @@ public class ChapterViewServiceImpl implements ChapterViewService {
     }
 
     @Override
-    public void rebuildTotalView(){
+    @Transactional
+    @Scheduled(cron = "0 0 */6 * * *")
+    public void rebuildTotalView() {
         redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
             RedisSerializer<String> serializer =
                     (RedisSerializer<String>) redisTemplate.getStringSerializer();
             List<Object[]> data = mangaRepository.findAllViewCount();
+
+            byte[] key = serializer.serialize(VIEW_KEY);
+            connection.del(key);
 
             for (Object[] row : data) {
                 String mangaId = row[0].toString();
                 Double view = ((Number) row[1]).doubleValue();
 
                 connection.zAdd(
-                        VIEW_KEY.getBytes(),
+                        key,
                         view,
                         serializer.serialize(mangaId)
                 );
@@ -303,8 +308,33 @@ public class ChapterViewServiceImpl implements ChapterViewService {
         });
     }
 
+    @Override
+    @Transactional
+    public void syncView(Manga manga) {
+        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            RedisSerializer<String> serializer =
+                    (RedisSerializer<String>) redisTemplate.getStringSerializer();
+            List<Object[]> data = mangaRepository.findAllViewCount();
 
-    @Scheduled(fixedRate = 30000)
+            byte[] key = serializer.serialize(VIEW_KEY);
+            connection.del(key);
+
+//            for (Object[] row : data) {
+            String mangaId = manga.getId().toString();
+            Double view = manga.getTotalView().doubleValue();
+
+            connection.zAdd(
+                    key,
+                    view,
+                    serializer.serialize(mangaId)
+            );
+//            }
+            return null;
+        });
+    }
+
+
+    @Scheduled(cron = "0 */15 * * * *")
     @Transactional
     public void flushViewsToDatabase() throws ExecutionException, InterruptedException {
         log.info("job update view");
@@ -321,11 +351,13 @@ public class ChapterViewServiceImpl implements ChapterViewService {
         mangas.stream().forEach(manga -> {
             if (viewMap.containsKey(manga.getId())) {
                 if (manga.getTotalView() != null && manga.getTotalView() < viewMap.get(manga.getId())) {
-                    long totalView =  viewMap.get(manga.getId());
+                    long totalView = viewMap.get(manga.getId()) + manga.getTotalView();
                     manga.setTotalView(totalView);
                 } else if (manga.getTotalView() != null && manga.getTotalView() > viewMap.get(manga.getId())) {
-                    long totalView = manga.getTotalView();
+                    long totalView = manga.getTotalView() + viewMap.get(manga.getId());
                     manga.setTotalView(totalView);
+
+                    this.syncView(manga);
                 } else if (manga.getTotalView() == null) {
                     manga.setTotalView(viewMap.get(manga.getId()));
                 }

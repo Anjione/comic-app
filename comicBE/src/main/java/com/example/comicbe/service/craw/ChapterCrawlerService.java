@@ -1,10 +1,11 @@
 package com.example.comicbe.service.craw;
 
-import com.example.comicbe.jpa.entity.Chapter;
-import com.example.comicbe.jpa.entity.ChapterImages;
-import com.example.comicbe.jpa.entity.Manga;
-import com.example.comicbe.payload.dto.ChapterDto;
+import com.example.comicbe.jpa.entity.*;
+import com.example.comicbe.jpa.repository.CategoryRepository;
 import com.example.comicbe.jpa.repository.ChapterRepository;
+import com.example.comicbe.jpa.repository.GenreRepository;
+import com.example.comicbe.jpa.repository.MangaRepository;
+import com.example.comicbe.payload.dto.ChapterDto;
 import com.example.comicbe.utils.ConvertUtils;
 import com.example.comicbe.utils.ToolDownload;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.BufferedInputStream;
@@ -32,14 +34,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -63,8 +63,18 @@ public class ChapterCrawlerService {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Autowired
     private ChapterRepository chapterRepository;
+
+    @Autowired
+    private GenreRepository genreRepository;
+
+    @Autowired
+    private MangaRepository mangaRepository;
 
     @Autowired
     private ToolDownload toolDownload;
@@ -139,10 +149,65 @@ public class ChapterCrawlerService {
 //                    .timeout(10000)
 //                    .get();
 
-        Document doc = toolDownload.fetchWithRetry(url,null);
+        Document doc = toolDownload.fetchWithRetry(url, null);
 
         Elements chapters = doc.select("#chapterlist ul li");
 
+        String type = doc
+                .select("div.imptdt:contains(Type) a")
+                .text().strip();
+
+        String author = doc
+                .select("div.imptdt:contains(Author) i")
+                .text();
+
+        String status = doc
+                .select("div.imptdt:contains(Status) i")
+                .text();
+
+        Elements genres = doc.select("span.mgen a[rel=tag]");
+
+        List<String> genreList = genres.eachText().stream().filter(Objects::nonNull)
+                .filter(s -> StringUtils.hasText(s))
+                .map(s -> s.toLowerCase().strip()).toList();
+
+        List<MangaGenre> mangaGenres = genreRepository.findAll();
+        Map<String, MangaGenre> stringMangaGenreMap = mangaGenres.stream().collect(Collectors.toMap(
+                genre -> genre.getCode().toLowerCase().strip(),
+                genre -> genre
+        ));
+        List<MangaGenre> mangaGenresManga = new ArrayList<>();
+        List<MangaGenre> mangaGenresAdd = new ArrayList<>();
+        genreList.stream().forEach(s -> {
+            if (stringMangaGenreMap.containsKey(s)) {
+                mangaGenresManga.add(stringMangaGenreMap.get(s));
+            } else {
+                MangaGenre mangaGenre1 = new MangaGenre();
+                mangaGenre1.setCode(s);
+                mangaGenresAdd.add(mangaGenre1);
+            }
+        });
+
+        if (!CollectionUtils.isEmpty(mangaGenresAdd)) {
+            log.info("insert genre with : {}" , mangaGenresAdd.size());
+            mangaGenresManga.addAll(genreRepository.saveAll(mangaGenresAdd));
+        }
+
+        manga.setGenres(mangaGenresManga.stream().collect(Collectors.toSet()));
+
+        Optional<MangaCategory> mangaCategory = categoryRepository.findByCodeIgnoreCase(type.strip());
+        if (mangaCategory.isPresent()) {
+            manga.setCategory(mangaCategory.get());
+        } else {
+            MangaCategory mangaCategoryNew = new MangaCategory();
+            mangaCategoryNew.setCode(type.strip());
+            log.info("insert category with code : {}", type);
+            mangaCategoryNew = categoryRepository.save(mangaCategoryNew);
+            manga.setCategory(mangaCategoryNew);
+        }
+
+        manga.setAuthor(author);
+        mangaRepository.save(manga);
         processItemsWithList(chapters, mangaName, manga);
 
         // THAY ĐỆ QUY BẰNG submit vào executor
@@ -226,44 +291,44 @@ public class ChapterCrawlerService {
         // Tạo executor với virtual threads (Java 21)
 //        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
 
-            for (Element li : items) {
-                executorGL.submit(() -> {
-                    try {
+        for (Element li : items) {
+            executorGL.submit(() -> {
+                try {
 
-                        Chapter chapter = new Chapter();
+                    Chapter chapter = new Chapter();
 //                         Lấy số chapter từ attribute
-                        String dataNum = li.attr("data-num");
+                    String dataNum = li.attr("data-num");
 
-                        // Lấy link
-                        String url = li.select("a").attr("href");
+                    // Lấy link
+                    String url = li.select("a").attr("href");
 
-                        // Lấy tên hiển thị - "Chapter 25"
-                        String chapterTitle = li.select(".chapternum").text();
+                    // Lấy tên hiển thị - "Chapter 25"
+                    String chapterTitle = li.select(".chapternum").text();
 
-                        // Lấy ngày cập nhật
-                        String chapterDate = li.select(".chapterdate").text();
+                    // Lấy ngày cập nhật
+                    String chapterDate = li.select(".chapterdate").text();
 
-                        chapter.setChapterCode(UUID.randomUUID().toString());
-                        chapter.setChapterName(chapterTitle);
-                        chapter.setChapterNumber(Double.valueOf(dataNum));
+                    chapter.setChapterCode(UUID.randomUUID().toString());
+                    chapter.setChapterName(chapterTitle);
+                    chapter.setChapterNumber(Double.valueOf(dataNum));
 
-                        List<ChapterImages> chapterImages = this.processImagesInChapter(url, chapterTitle, mangaName);
-                        chapter.setChapterImages(mapper.writeValueAsString(chapterImages));
-                        chapter.setManga(manga);
-                        chapterRepository.save(chapter);
-                        // Tải ảnh
+                    List<ChapterImages> chapterImages = this.processImagesInChapter(url, chapterTitle, mangaName);
+                    chapter.setChapterImages(mapper.writeValueAsString(chapterImages));
+                    chapter.setManga(manga);
+                    chapterRepository.save(chapter);
+                    // Tải ảnh
 //                        String localImage = downloadImage(url, title);
 //
 //
 //                        log.info("Saved manga: " + title);
 
-                    } catch (Exception e) {
-                        log.error("Error processing manga: " + e.getMessage());
-                    }
-                });
-            }
+                } catch (Exception e) {
+                    log.error("Error processing manga: " + e.getMessage());
+                }
+            });
+        }
 
-            // Sau khi submit tất cả tasks, shutdown executor để chờ các task kết thúc
+        // Sau khi submit tất cả tasks, shutdown executor để chờ các task kết thúc
 //            executor.shutdown();
 //            while (!executor.isTerminated()) {
 //                Thread.sleep(100);
@@ -276,7 +341,7 @@ public class ChapterCrawlerService {
 
 
     private List<ChapterImages> processImagesInChapter(String url, String chapterName, String mangaName) throws IOException {
-        Document doc = toolDownload.fetchWithRetry(url,null);
+        Document doc = toolDownload.fetchWithRetry(url, null);
         Elements imgs = doc.select("#readerarea img");
 
         List<String> realImages = new ArrayList<>();
@@ -326,7 +391,7 @@ public class ChapterCrawlerService {
 //            }
 //            this.downloadImage(realUrl, alt, chapterName, mangaName);
 //            String finalAlt = alt;
-            if (hotLink){
+            if (hotLink) {
                 URL urlImage = new URL(src);
                 String path = urlImage.getPath();
                 String filename = Paths.get(path).getFileName().toString();
