@@ -5,14 +5,17 @@ import com.example.comicbe.payload.filter.MangaFilter;
 import com.example.comicbe.payload.paging.PageRequestDTO;
 import com.example.comicbe.payload.paging.PagingFilterBase;
 import com.example.comicbe.payload.reponse.ResponseMessage;
-import com.example.comicbe.service.ChapterViewServiceImpl;
+import com.example.comicbe.service.ChapterViewService;
 import com.example.comicbe.service.MangaService;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/manga")
@@ -22,7 +25,7 @@ public class MangaController {
     private MangaService mangaService;
 
     @Autowired
-    private ChapterViewServiceImpl chapterViewService;
+    private ChapterViewService chapterViewService;
 
     @GetMapping
     public ResponseMessage mangaDtos() {
@@ -60,9 +63,38 @@ public class MangaController {
         MangaDto mangaDto = mangaService.getDetailsById(mangaId);
         if (mangaDto != null) {
             mangaDto.setTotalView(chapterViewService.fetchViewManga(mangaId));
-            chapterViewService.increaseView(mangaId);
+            chapterViewService.increaseViewV2(mangaId);
         }
         return new ResponseMessage<>(mangaDto);
+
+    }
+
+    @GetMapping("/popular")
+    public ResponseMessage getMangaDetail() {
+        Map<String, List<Long>> map = chapterViewService.getPopularAll(0, 15);
+        Map<String, List<MangaDto>> result = new HashMap<>();
+
+        List<MangaDto> allManga = mangaService.mangaDtos();
+
+        Map<Long, MangaDto> mangaMap = allManga.stream()
+                .collect(Collectors.toMap(MangaDto::getId, m -> m));
+
+        map.forEach((key, idList) -> {
+            List<MangaDto> mangas = idList.stream()
+                    .map(mangaMap::get)
+                    .filter(Objects::nonNull)
+                    .toList();
+
+            result.put(key, mangas);
+        });
+        return new ResponseMessage<>(result);
+
+    }
+
+    @GetMapping("/rebuildView")
+    public ResponseMessage rebuildView() {
+        chapterViewService.rebuildTotalView();
+        return new ResponseMessage<>("SUCCESS");
 
     }
 }

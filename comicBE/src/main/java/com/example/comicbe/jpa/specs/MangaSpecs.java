@@ -14,21 +14,21 @@ import java.util.List;
 
 @Component
 public class MangaSpecs {
-    public Specification<Manga> mangaFilterSpecification(MangaFilter mangaFilter){
+    public Specification<Manga> mangaFilterSpecification(MangaFilter mangaFilter) {
         return ((root, query, criteriaBuilder) -> {
             query.distinct(true);
             List<Predicate> predicates = new ArrayList<>();
 
-            if (StringUtils.hasText(mangaFilter.getAuthor())){
+            if (StringUtils.hasText(mangaFilter.getAuthor())) {
                 predicates.add(criteriaBuilder.like(root.get(Manga_.AUTHOR), mangaFilter.getAuthor().strip()));
             }
 
-            if (StringUtils.hasText(mangaFilter.getCategory())){
+            if (StringUtils.hasText(mangaFilter.getCategory())) {
                 predicates.add(criteriaBuilder.like(root.get(Manga_.CHAPTERS), mangaFilter.getCategory().strip()));
             }
 
-            if (StringUtils.hasText(mangaFilter.getTitle())){
-                predicates.add(criteriaBuilder.like(root.get(Manga_.TITLE), mangaFilter.getTitle().strip()));
+            if (StringUtils.hasText(mangaFilter.getTitle())) {
+                predicates.add(criteriaBuilder.like(root.get(Manga_.TITLE), "%" + mangaFilter.getTitle().strip() + "%"));
             }
 
 
@@ -39,6 +39,6 @@ public class MangaSpecs {
 
     public Predicate concatenatePredicate(List<Predicate> predicates, CriteriaBuilder cb) {
         int size = predicates.size();
-        return size > 0 ? cb.and((Predicate[])predicates.toArray(new Predicate[size])) : cb.conjunction();
+        return size > 0 ? cb.and((Predicate[]) predicates.toArray(new Predicate[size])) : cb.conjunction();
     }
 }

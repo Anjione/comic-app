@@ -11,16 +11,14 @@ import java.util.Map;
 @AllArgsConstructor
 public enum MangaCategory {
     MANGA(-1, ""),
-    INACTIVE(0, ""),
-    ACTIVE(1, ""),
-    CANCELLED(2, ""),
-    REFERENCE(3, ""),
+    MANH_WA(0, ""),
+    MANH_UA(1, ""),
+    COMIC(2, ""),
+    NOVEL(3, ""),
     ;
 
     private Integer type;
     private String description;
-//    private String ocbNotiValue;
-
 
     // lookup hashMap
     private static Map<Integer, MangaCategory> lookup = new HashMap<>();
