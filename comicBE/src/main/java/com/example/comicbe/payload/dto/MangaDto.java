@@ -1,6 +1,7 @@
 package com.example.comicbe.payload.dto;
 
 import com.example.comicbe.constant.MangaCategory;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MangaDto implements Serializable {
     private long id;
     private String title;
@@ -25,7 +27,7 @@ public class MangaDto implements Serializable {
     private String lastChapter;
     private String modifiedBy;
     private String createdBy;
-    private List<String> mangaCategory;
+    private String mangaCategory;
     private List<String> genres;
     private Boolean colored;
 

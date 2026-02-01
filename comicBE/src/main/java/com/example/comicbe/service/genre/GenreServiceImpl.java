@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,8 +48,11 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public GenreDto update(GenreDto genreDto){
         ConvertUtils.trimAllStringFields(genreDto);
-        if (genreRepository.existsByCodeIgnoreCase(genreDto.getCode().strip())){
+        if (StringUtils.hasText(genreDto.getCode()) && genreRepository.existsByCodeIgnoreCase(genreDto.getCode().strip())){
             List<MangaGenre> mangaGenres = genreRepository.findAllByCodeIgnoreCase(genreDto.getCode().strip());
+            if (mangaGenres.stream().anyMatch(mangaGenre -> mangaGenre.getId() != genreDto.getId() && genreDto.getCode().strip().equalsIgnoreCase(mangaGenre.getCode()))){
+                throw new ValidationException("code is duplicate");
+            }
         }
         MangaGenre mangaGenre = new MangaGenre();
         BeanUtils.copyProperties(genreDto, mangaGenre);

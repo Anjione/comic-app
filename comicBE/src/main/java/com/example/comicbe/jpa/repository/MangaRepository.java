@@ -1,6 +1,7 @@
 package com.example.comicbe.jpa.repository;
 
 import com.example.comicbe.jpa.entity.Manga;
+import com.example.comicbe.jpa.entity.MangaCategory;
 import com.example.comicbe.jpa.entity.MangaGenre;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -17,4 +18,6 @@ public interface MangaRepository extends JpaRepository<Manga, Long>, JpaSpecific
     List<Object[]> findAllViewCount();
 
     boolean existsByGenres(Set<MangaGenre> genres);
+
+    boolean existsByCategory(MangaCategory category);
 }

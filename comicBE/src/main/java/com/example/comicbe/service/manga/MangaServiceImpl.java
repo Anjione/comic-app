@@ -97,7 +97,8 @@ public class MangaServiceImpl implements MangaService {
                 .map(m -> {
                     MangaDto mangaDto = new MangaDto();
                     BeanUtils.copyProperties(m, mangaDto);
-                    mangaDto.setGenres(m.getGenres().stream().map(MangaGenre::getCode).toList());
+//                    mangaDto.setGenres(m.getGenres().stream().map(MangaGenre::getCode).toList());
+                    mangaDto.setMangaCategory(m.getCategory().getCode());
 
                     return mangaDto;
                 })
@@ -122,6 +123,8 @@ public class MangaServiceImpl implements MangaService {
                 })
                 .sorted(Comparator.comparing(ChapterDto::getChapterNumber)).toList();
         mangaDto.setChapters(chapterDtos);
+        mangaDto.setGenres(manga.getGenres().stream().map(MangaGenre::getCode).toList());
+        mangaDto.setMangaCategory(manga.getCategory().getCode());
         return mangaDto;
     }
 

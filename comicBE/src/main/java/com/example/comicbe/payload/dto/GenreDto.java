@@ -1,30 +1,38 @@
 package com.example.comicbe.payload.dto;
 
 import com.example.comicbe.jpa.entity.MangaGenre;
-import jakarta.validation.Valid;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GenreDto implements Serializable {
+    @NotNull(groups = {Update.class}, message = "id is not null")
     private Long id;
     private String name;
 
-    @NotBlank
+    @NotBlank(groups = {Insert.class}, message = "code is not null")
     private String code;
 
     private String slug;
 
-    public GenreDto(MangaGenre mangaGenre){
+    public GenreDto(MangaGenre mangaGenre) {
         BeanUtils.copyProperties(mangaGenre, this);
+    }
+
+    public interface Insert extends Default {
+    }
+
+    public interface Update extends Default {
     }
 }

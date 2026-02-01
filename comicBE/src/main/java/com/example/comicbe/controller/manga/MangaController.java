@@ -38,7 +38,10 @@ public class MangaController {
     public ResponseMessage groupAlphabet() {
         Map<Character, List<MangaDto>> map = mangaService.groupFirstString();
         List<GroupAlphabetDto> groupAlphabetDtos = map.entrySet().stream().map(
-                characterListEntry -> GroupAlphabetDto.builder().letter(String.valueOf(characterListEntry.getKey())).items(characterListEntry.getValue()).build()).toList();
+                characterListEntry -> GroupAlphabetDto.builder()
+                        .letter(String.valueOf(characterListEntry.getKey()))
+                        .items(characterListEntry.getValue())
+                        .build()).toList();
         return new ResponseMessage<>(groupAlphabetDtos);
 
     }
