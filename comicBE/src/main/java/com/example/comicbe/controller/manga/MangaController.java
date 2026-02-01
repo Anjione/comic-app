@@ -1,11 +1,12 @@
 package com.example.comicbe.controller.manga;
 
+import com.example.comicbe.payload.dto.GroupAlphabetDto;
 import com.example.comicbe.payload.dto.MangaDto;
 import com.example.comicbe.payload.filter.MangaFilter;
 import com.example.comicbe.payload.paging.PageRequestDTO;
 import com.example.comicbe.payload.paging.PagingFilterBase;
 import com.example.comicbe.payload.reponse.ResponseMessage;
-import com.example.comicbe.service.ChapterViewService;
+import com.example.comicbe.service.ViewService;
 import com.example.comicbe.service.MangaService;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class MangaController {
     private MangaService mangaService;
 
     @Autowired
-    private ChapterViewService chapterViewService;
+    private ViewService viewService;
 
     @GetMapping
     public ResponseMessage mangaDtos() {
@@ -35,7 +36,10 @@ public class MangaController {
 
     @GetMapping("/groupAlphabet")
     public ResponseMessage groupAlphabet() {
-        return new ResponseMessage<>(mangaService.groupFirstString());
+        Map<Character, List<MangaDto>> map = mangaService.groupFirstString();
+        List<GroupAlphabetDto> groupAlphabetDtos = map.entrySet().stream().map(
+                characterListEntry -> GroupAlphabetDto.builder().letter(String.valueOf(characterListEntry.getKey())).items(characterListEntry.getValue()).build()).toList();
+        return new ResponseMessage<>(groupAlphabetDtos);
 
     }
 
@@ -44,6 +48,8 @@ public class MangaController {
             @RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "genre", required = false) List<String> genre,
+            @RequestParam(value = "status", required = false) List<String> status,
             @RequestParam(value = "pageNum", required = false) @Min(value = 1, message = "Page number must be larger than 0") final Integer pageNum,
             @RequestParam(value = "pageSize", required = false) @Min(value = 1, message = "Page size must be larger than 0") final Integer pageSize
     ) {
@@ -62,8 +68,8 @@ public class MangaController {
     public ResponseMessage getMangaDetail(@PathVariable Long mangaId) {
         MangaDto mangaDto = mangaService.getDetailsById(mangaId);
         if (mangaDto != null) {
-            mangaDto.setTotalView(chapterViewService.fetchViewManga(mangaId));
-            chapterViewService.increaseViewV2(mangaId);
+            mangaDto.setTotalView(viewService.fetchViewManga(mangaId));
+            viewService.increaseViewV2(mangaId);
         }
         return new ResponseMessage<>(mangaDto);
 
@@ -71,7 +77,7 @@ public class MangaController {
 
     @GetMapping("/popular")
     public ResponseMessage getMangaDetail() {
-        Map<String, List<Long>> map = chapterViewService.getPopularAll(0, 15);
+        Map<String, List<Long>> map = viewService.getPopularAll(0, 15);
         Map<String, List<MangaDto>> result = new HashMap<>();
 
         List<MangaDto> allManga = mangaService.mangaDtos();
@@ -93,7 +99,7 @@ public class MangaController {
 
     @GetMapping("/rebuildView")
     public ResponseMessage rebuildView() {
-        chapterViewService.rebuildTotalView();
+        viewService.rebuildTotalView();
         return new ResponseMessage<>("SUCCESS");
 
     }

@@ -21,11 +21,13 @@ public class Manga extends BaseEntity{
     private String author;
     private Long totalView;
     private Double rating;
-    @ManyToOne
+    private Boolean colored;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private MangaCategory category;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "manga_genre",
             joinColumns = @JoinColumn(name = "manga_id"),

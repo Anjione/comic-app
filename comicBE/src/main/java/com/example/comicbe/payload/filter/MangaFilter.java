@@ -2,6 +2,9 @@ package com.example.comicbe.payload.filter;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.catalina.LifecycleState;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,5 +15,6 @@ public class MangaFilter extends BaseFilter {
     private String author;
     private String title;
     private String category;
+    private List<String> genre;
 
 }

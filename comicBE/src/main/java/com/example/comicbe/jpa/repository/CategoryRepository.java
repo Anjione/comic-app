@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<MangaCategory, Long> {
     List<MangaCategory> findAllByCodeIgnoreCase(String code);
     Optional<MangaCategory> findByCodeIgnoreCase(String code);
+    boolean existsByCodeIgnoreCase(String code);
+
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public interface ChapterViewService {
+public interface ViewService {
     void increaseView(Long mangaId);
 
     void increaseViewV2(Long mangaId);

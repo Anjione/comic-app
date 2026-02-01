@@ -1,6 +1,7 @@
 package com.example.comicbe.service.manga;
 
 import com.example.comicbe.jpa.entity.Manga;
+import com.example.comicbe.jpa.entity.MangaGenre;
 import com.example.comicbe.jpa.repository.MangaRepository;
 import com.example.comicbe.jpa.specs.MangaSpecs;
 import com.example.comicbe.payload.dto.ChapterDto;
@@ -96,6 +97,8 @@ public class MangaServiceImpl implements MangaService {
                 .map(m -> {
                     MangaDto mangaDto = new MangaDto();
                     BeanUtils.copyProperties(m, mangaDto);
+                    mangaDto.setGenres(m.getGenres().stream().map(MangaGenre::getCode).toList());
+
                     return mangaDto;
                 })
                 .toList();
@@ -133,6 +136,7 @@ public class MangaServiceImpl implements MangaService {
 //            chapterDto.setTitle();
             return chapterDto;
         }).toList();
+        mangaDto.setGenres(manga.getGenres().stream().map(MangaGenre::getCode).toList());
         mangaDto.setChapters(chapterDtos);
         return mangaDto;
     }

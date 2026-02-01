@@ -165,6 +165,13 @@ public class ChapterCrawlerService {
                 .select("div.imptdt:contains(Status) i")
                 .text();
 
+        String color = doc.select("span.colored").text();
+        if (StringUtils.hasText(color) && "Color".equalsIgnoreCase(color)){
+            manga.setColored(true);
+        }else {
+            manga.setColored(false);
+        }
+
         Elements genres = doc.select("span.mgen a[rel=tag]");
 
         List<String> genreList = genres.eachText().stream().filter(Objects::nonNull)
@@ -178,6 +185,7 @@ public class ChapterCrawlerService {
         ));
         List<MangaGenre> mangaGenresManga = new ArrayList<>();
         List<MangaGenre> mangaGenresAdd = new ArrayList<>();
+
         genreList.stream().forEach(s -> {
             if (stringMangaGenreMap.containsKey(s)) {
                 mangaGenresManga.add(stringMangaGenreMap.get(s));
@@ -195,15 +203,17 @@ public class ChapterCrawlerService {
 
         manga.setGenres(mangaGenresManga.stream().collect(Collectors.toSet()));
 
-        Optional<MangaCategory> mangaCategory = categoryRepository.findByCodeIgnoreCase(type.strip());
-        if (mangaCategory.isPresent()) {
-            manga.setCategory(mangaCategory.get());
-        } else {
-            MangaCategory mangaCategoryNew = new MangaCategory();
-            mangaCategoryNew.setCode(type.strip());
-            log.info("insert category with code : {}", type);
-            mangaCategoryNew = categoryRepository.save(mangaCategoryNew);
-            manga.setCategory(mangaCategoryNew);
+        if (StringUtils.hasText(type)){
+            Optional<MangaCategory> mangaCategory = categoryRepository.findByCodeIgnoreCase(type.strip());
+            if (mangaCategory.isPresent()) {
+                manga.setCategory(mangaCategory.get());
+            } else {
+                MangaCategory mangaCategoryNew = new MangaCategory();
+                mangaCategoryNew.setCode(type.strip());
+                log.info("insert category with code : {}", type);
+                mangaCategoryNew = categoryRepository.save(mangaCategoryNew);
+                manga.setCategory(mangaCategoryNew);
+            }
         }
 
         manga.setAuthor(author);
@@ -251,7 +261,7 @@ public class ChapterCrawlerService {
                     return chapter;
 
                 } catch (Exception e) {
-                    log.error("Error processing chapter: {}", e.getMessage());
+                    log.error("Error processing chapter: {}", e.getStackTrace());
                     return null; // hoặc throw RuntimeException nếu muốn fail-fast
                 }
             }, executorGL);

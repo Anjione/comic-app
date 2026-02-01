@@ -1,11 +1,10 @@
 package com.example.comicbe.controller.cache;
 
-import com.example.comicbe.service.chapterView.ChapterViewServiceImpl;
+import com.example.comicbe.service.chapterView.ViewServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +16,7 @@ public class CacheController {
     private CacheManager cacheManager;
 
     @Autowired
-    private ChapterViewServiceImpl chapterViewService;
+    private ViewServiceImpl chapterViewService;
 
 //    @DeleteMapping("/clear/{cacheName}")
 //    public String clearCacheByName(@PathVariable String cacheName) {

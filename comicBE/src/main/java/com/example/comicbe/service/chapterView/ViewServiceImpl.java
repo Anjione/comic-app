@@ -2,7 +2,7 @@ package com.example.comicbe.service.chapterView;
 
 import com.example.comicbe.jpa.entity.Manga;
 import com.example.comicbe.jpa.repository.MangaRepository;
-import com.example.comicbe.service.ChapterViewService;
+import com.example.comicbe.service.ViewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ChapterViewServiceImpl implements ChapterViewService {
+public class ViewServiceImpl implements ViewService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 

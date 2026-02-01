@@ -32,8 +32,10 @@ CREATE TABLE `manga` (
                          `manga_name` varchar(255) DEFAULT NULL,
                          `modified_by` varchar(255) DEFAULT NULL,
                          `title` varchar(255) DEFAULT NULL,
+                         `colored` TINYINT DEFAULT NULL,
                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1413 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+ALTER TABLE comic.manga ADD colored TINYINT NULL;
 
 
 -- comic.upload_transaction definition

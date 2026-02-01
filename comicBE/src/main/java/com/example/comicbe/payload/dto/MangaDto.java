@@ -25,7 +25,9 @@ public class MangaDto implements Serializable {
     private String lastChapter;
     private String modifiedBy;
     private String createdBy;
-    private MangaCategory mangaCategory;
+    private List<String> mangaCategory;
+    private List<String> genres;
+    private Boolean colored;
 
     private List<ChapterDto> chapters;
 
