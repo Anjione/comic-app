@@ -7,20 +7,21 @@ import { fira } from "@/lib/fonts";
 import mangaSrc from "@/asset/manga.png";
 import manhwaSrc from "@/asset/manhwa.png";
 import manhuaSrc from "@/asset/manhua.png";
+import { PopularManga } from "@/type/popular-comic";
 
 export type Chapter = { title: string; url: string; timeAgo?: string };
-export type PopularManga = {
-  id: string | number;
-  url: string;
-  title: string;
-  cover: string;
-  type?: string;
-  chapter?: string;   // e.g. "Chapter 783" or "Chapter 16"
-  ratingPct?: number;      // optional 0-100
-  score?: number;          // optional 0-10 or 0-5
-  isNew?: boolean;
-  colored?: boolean;
-};
+// export type PopularManga = {
+//   id: string | number;
+//   url: string;
+//   title: string;
+//   cover: string;
+//   type?: string;
+//   chapter?: string;   // e.g. "Chapter 783" or "Chapter 16"
+//   ratingPct?: number;      // optional 0-100
+//   score?: number;          // optional 0-10 or 0-5
+//   isNew?: boolean;
+//   colored?: boolean;
+// };
 
 
 
@@ -59,7 +60,7 @@ export default function PopularToday({
 
   return (
     <div>
-      <div className="relative bg-[#000] flex justify-between items-baseline px-[15px]">
+      <div className="relative bg-black flex justify-between items-baseline px-[15px]">
         <h2 className="mt-[15px] px-[20px] py-[5px] bg-[#222] rounded-tl-[5px] rounded-tr-[5px] text-[15px] text-white leading-[20px] font-semibold relative">
           Popular Today
         </h2>
@@ -78,21 +79,17 @@ export default function PopularToday({
         >
           {items.map((c, index) => {
             const uniqueKey = `${c.id}-${index}`;
-            const iconSrc = getTypeIcon(c.type);
+            const iconSrc = getTypeIcon(c.type || "Manga");
             return (
-              <article key={uniqueKey} className="styletwo bg-transparent rounded-md p-[10px] flex flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer">
+              <article key={uniqueKey} className="styletwo w-[140px] min-[550px]:w-[166px] shrink-0 bg-transparent rounded-md p-[10px] flex flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer">
                 {/* Cover */}
-                <Link href={c.url} className="relative w-full rounded overflow-hidden shrink-0">
-                  <article className="w-[120px] min-[550px]:w-[146px]">
-                    <div className="relative w-full aspect-[3/4]">
-                      <Image
-                        src={c.cover}
-                        fill
-                        alt={c.title}
-                        className="object-cover"
-                      />
-                    </div>
-                  </article>
+                <Link href={`/manga/${c.id}`} className="relative w-full aspect-3/4 rounded overflow-hidden shrink-0">
+                  <Image
+                    src={c.mangaAvatarUrl}
+                    fill
+                    alt={c.title}
+                    className="object-cover"
+                  />
                   {/* 💥 THAY THẾ/THÊM ICON 💥 */}
                   {iconSrc ? (
                     // Hiển thị Icon ảnh ở góc trên bên trái
@@ -132,22 +129,22 @@ export default function PopularToday({
 
 
                 {/* Title */}
-                <Link href={c.url} className="w-full block">
+                <Link href={`/manga/${c.id}`} className="w-full block">
                   <div className="text-[13px] my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{c.title}</div>
                 </Link>
 
                 {/* Chapter count */}
-                {c.chapter && (
-                  <div className={`text-[13px] text-[#999] ${fira.className}`}>{c.chapter}</div>
+                {c.lastChapter && (
+                  <div className={`text-[13px] text-[#999] ${fira.className}`}>{c.lastChapter}</div>
                 )}
 
                 {/* Stars */}
                 <div className="flex items-center gap-1 mt-1">
                   <div className="flex items-center">
-                    <StarRating score={c.score} />
+                    <StarRating score={c.rating} />
                   </div>
                   <div className="text-xs text-[#999]">
-                    {c.score}
+                    {c.rating}
                   </div>
                 </div>
               </article>

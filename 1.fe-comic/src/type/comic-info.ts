@@ -1,20 +1,20 @@
 export type SeriesItem = {
     id: number;
-    rank: number;
-    chapter: string;
-    title: string;
-    href: string;
-    img: string;
-    genres: string[];
+    rank: number; //thứ hạng của truyện theo thời gian ()
+    chapter: string; // latest chapter
+    title: string; // tiêu đề truyện
+    href: string; // link đến trang truyện
+    img: string; // link ảnh của truyện
+    genres: string[]; // thể loại của truyện
     score: number; // 0-10
-    type?: string;
-    colored?: boolean;
+    type?: string; // manga, manhwa, manhua
+    colored?: boolean; // có màu không
 };
 
 export type GenreItem = {
     id: number;
-    name: string;
-    url: string;
+    name: string; // tên thể loại
+    url: string; // link đến trang thể loại
 };
 
 export const SAMPLE_GENRES: GenreItem[] = [
@@ -88,6 +88,23 @@ export const SAMPLE_GENRES: GenreItem[] = [
     { id: 68, name: 'Wuxia', url: 'https://komik25.com/genres/wuxia/' }
 ];
 
+export interface ChapterItem {
+    url: string;
+    title: string;
+    timeago: string;
+}
+
+export interface LatestManga {
+    id: string;
+    url: string;
+    title: string;
+    cover: string;
+    type: string;
+    isNew: boolean;
+    status: string;
+    chapters: ChapterItem[];
+}
+
 export const STATUS_LIST = [
     { value: "", label: "All" },
     { value: "ongoing", label: "Ongoing" },
@@ -113,7 +130,17 @@ export const SORT_LIST = [
     { value: "popular", label: "Popular" },
 ];
 
-export const SERIES_DATA = [
+// Kiểu dữ liệu cho truyện text mode
+export type TextModeComic = {
+    letter: string;
+    items: {
+        id: number;
+        title: string;
+        url: string;
+    }[];
+}
+
+export const SERIES_DATA: TextModeComic[] = [
     {
         letter: 'R',
         items: [
@@ -127,7 +154,6 @@ export const SERIES_DATA = [
         ]
     },
     {
-        // Ký tự đặc biệt (ví dụ: bắt đầu bằng dấu ngoặc kép)
         letter: '"',
         items: [
             { id: 167364, title: '“Honyaku” no Sainou de Ore Dake ga Sekai wo Kaihen Dekiru Ken', url: 'https://komik25.com/manga/honyaku-no-sainou-de-ore-dake-ga-sekai-wo-kaihen-dekiru-ken/' },
@@ -135,5 +161,4 @@ export const SERIES_DATA = [
             { id: 134364, title: '“Shop” Skill Sae Areba, Dungeon-ka Shita Sekai Demo Rakushou da', url: 'https://komik25.com/manga/shop-skill-sae-areba-dungeon-ka-shita-sekai-demo-rakushou-da/' }
         ]
     },
-    // ... Thêm các nhóm A, B, C, D, E... vào đây
 ];

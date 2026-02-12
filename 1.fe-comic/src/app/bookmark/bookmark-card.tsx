@@ -68,7 +68,7 @@ export default function BookmarkCard() {
                             {isEditMode && (
                                 <div
                                     onClick={(e) => handleDeleteItem(e, it.id)}
-                                    className="absolute z-[10] cursor-pointer top-0 right-0 text-white text-[13px] px-[5px] py-[2px] bg-[#e53427]"
+                                    className="absolute z-11 cursor-pointer top-0 right-0 text-white text-[13px] px-[5px] py-[2px] bg-[#e53427]"
                                 >
                                     Delete
                                 </div>

@@ -2,36 +2,31 @@
 "use client";
 
 import { fira } from "@/lib/fonts";
+import { PopularMangaGroups } from "@/type/popular-comic";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { JSX, useState } from "react";
 import StarRating from "./star-rating";
 
-type SeriesItem = {
-    id: number;
-    rank: number;
-    title: string;
-    href: string;
-    img: string;
-    genres: string[];
-    score: number; // 0-10
-};
+// const sampleWeekly: SeriesItem[] = [
+//     { id: 1, rank: 1, title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+//     { id: 2, rank: 2, title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1590796583326-afd3bb20d22d?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Action", "Fantasy"], score: 7 },
+//     { id: 3, rank: 3, title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
+// ];
 
-const sampleWeekly: SeriesItem[] = [
-    { id: 1, rank: 1, title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-    { id: 2, rank: 2, title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1590796583326-afd3bb20d22d?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Action", "Fantasy"], score: 7 },
-    { id: 3, rank: 3, title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-];
+// const sampleMonthly: SeriesItem[] = [
+//     { id: 4, rank: 1, title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6 },
+//     { id: 5, rank: 2, title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1611457194403-d3aca4cf9d11?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Drama"], score: 8 },
+// ];
 
-const sampleMonthly: SeriesItem[] = [
-    { id: 4, rank: 1, title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6 },
-    { id: 5, rank: 2, title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1611457194403-d3aca4cf9d11?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Drama"], score: 8 },
-];
+// const sampleAlltime: SeriesItem[] = [
+//     { id: 6, rank: 1, title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action"], score: 9 },
+//     { id: 7, rank: 2, title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
+// ];
 
-const sampleAlltime: SeriesItem[] = [
-    { id: 6, rank: 1, title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action"], score: 9 },
-    { id: 7, rank: 2, title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
-];
+const categories = ["Action", "Adventure", "Fantasy"];
 
 type TabId = "weekly" | "monthly" | "alltime";
 
@@ -51,7 +46,28 @@ function tabClass(isActive: boolean) {
 }
 
 export default function SerialPopular(): JSX.Element {
+    // const NoSSRComponent = dynamic(() => import('./manga-list'), { ssr: false });
+    const { data: popularGroup } = useQuery<PopularMangaGroups>({
+        queryKey: ['popular-manga'],
+        // queryFn vẫn phải khai báo để React Query có thể fetch lại khi dữ liệu cũ (stale)
+        queryFn: async () => {
+            const response = await axios.get('/api-remote/manga/popular');
+            return response.data.data;
+        },
+        initialData: {
+            total: [],
+            week: [],
+            month: [],
+            year: [],
+            day: [],
+        },
+        staleTime: 1000 * 60 * 5,
+    });
+
     const [active, setActive] = useState<TabId>("weekly");
+    const sampleWeekly = popularGroup?.week.sort((a, b) => b.totalView - a.totalView);
+    const sampleMonthly = popularGroup?.month.sort((a, b) => b.totalView - a.totalView);
+    const sampleAlltime = popularGroup?.total.sort((a, b) => b.totalView - a.totalView);
 
     const items = active === "weekly" ? sampleWeekly : active === "monthly" ? sampleMonthly : sampleAlltime;
 
@@ -90,21 +106,21 @@ export default function SerialPopular(): JSX.Element {
 
                 {/* Content */}
                 <div className="grid grid-cols-1 gap-4 p-3">
-                    {items.length > 0 ? (
-                        items.map((it) => (
+                    {items?.length > 0 ? (
+                        items.map((it, index) => (
                             <article
                                 key={it.id}
                                 className="flex gap-4 items-start border-b border-[#312f40] last:border-b-0 pb-4"
                                 aria-labelledby={`series-${it.id}`}
                             >
-                                <div className="w-[25px] h-[25px] text-center self-center flex items-center justify-center text-[1em] text-[#888] border border-[#888] border-[0.5px] rounded-[3px] ">
-                                    {it.rank}
+                                <div className="w-[25px] h-[25px] text-center self-center flex items-center justify-center text-[1em] text-[#888] border-[#888] border-[0.5px] rounded-[3px] ">
+                                    {index + 1}
                                 </div>
 
-                                <div className="w-[58px] h-[73px] flex-shrink-0 relative rounded overflow-hidden">
-                                    <Link href={it.href} className="w-full h-full block">
+                                <div className="w-[58px] h-[73px] shrink-0 relative rounded overflow-hidden">
+                                    <Link href={`/manga/${it.id}`} className="w-full h-full block">
                                         <Image
-                                            src={it.img}
+                                            src={it.mangaAvatarUrl}
                                             alt={it.title}
                                             fill
                                             sizes="58px"
@@ -115,13 +131,13 @@ export default function SerialPopular(): JSX.Element {
                                 </div>
 
                                 <div className="flex-1 text-[12px]">
-                                    <Link href={it.href} className="w-full block hover:text-black transition-colors duration-300">
+                                    <Link href={`/manga/${it.id}`} className="w-full block hover:text-black transition-colors duration-300">
                                         <div className="text-[13.3px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{it.title}</div>
                                     </Link>
 
                                     <div className="text-xs mt-1">
                                         <span className={`text-[#999] font-medium ${fira.className}`}>Genres</span>:{" "}
-                                        {it.genres.map((g, idx) => (
+                                        {categories.map((g, idx) => (
                                             <span key={g}>
                                                 <Link
                                                     href={`/genre/${g.toLowerCase()}`}
@@ -129,7 +145,7 @@ export default function SerialPopular(): JSX.Element {
                                                 >
                                                     {g}
                                                 </Link>
-                                                {idx < it.genres.length - 1 && ", "}
+                                                {idx < categories.length - 1 && ", "}
                                             </span>
                                         ))}
                                     </div>
@@ -137,10 +153,10 @@ export default function SerialPopular(): JSX.Element {
                                     {/* Stars */}
                                     <div className="flex items-center gap-1 mt-1">
                                         <div className="flex items-center">
-                                            <StarRating score={it.score} />
+                                            <StarRating score={it.rating} />
                                         </div>
                                         <div className="text-xs text-[#999]">
-                                            {it.score}
+                                            {it.rating}
                                         </div>
                                     </div>
                                 </div>
