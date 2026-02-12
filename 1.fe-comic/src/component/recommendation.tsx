@@ -1,13 +1,14 @@
 // components/PopularSeriesWidget.tsx
 "use client";
 
-import React, { JSX, useState } from "react";
-import StarRating from "./star-rating";
-import Link from "next/link";
-import Image from "next/image";
-import { SeriesItem } from "@/type/comic-info";
 import { fira } from "@/lib/fonts";
-import { getTypeIcon } from "@/lib/common-util";
+import { SeriesItem } from "@/type/comic-info";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import Image from "next/image";
+import Link from "next/link";
+import { JSX, useEffect, useMemo, useState } from "react";
+import StarRating from "./star-rating";
 
 
 // type SeriesItem = {
@@ -21,43 +22,8 @@ import { getTypeIcon } from "@/lib/common-util";
 //     score: number; // 0-10
 // };
 
-const sampleComedy: SeriesItem[] = [
-    { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "manga", colored: true },
-    { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7, type: "manhua", colored: true },
-    { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "manhwa", colored: true },
-    { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "manga", colored: true },
-    { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "manhua", colored: true },
-];
-
-const sampleHorror: SeriesItem[] = [
-    { id: 6, rank: 1, chapter: "Chapter 1", title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6, type: "manga", colored: true },
-    { id: 7, rank: 2, chapter: "Chapter 2", title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Drama"], score: 8, type: "manhua", colored: true },
-];
-
-const sampleSchoolLife: SeriesItem[] = [
-    { id: 8, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action"], score: 9, type: "manhwa", colored: true },
-    { id: 9, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8, type: "manga", colored: true },
-];
-
-const sampleShotacon: SeriesItem[] = [
-    { id: 10, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action"], score: 9, type: "manhua", colored: true },
-    { id: 11, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8, type: "manga", colored: true },
-];
-
-const sampleWebComic: SeriesItem[] = [
-    { id: 12, rank: 1, chapter: "Chapter 1", title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action"], score: 9, type: "manhua", colored: true },
-    { id: 13, rank: 2, chapter: "Chapter 2", title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8, type: "manga", colored: true },
-];
-
 type TabId = "comedy" | "horror" | "school-life" | "shotacon" | "web-comic";
 
-const TABS: { id: TabId; label: string }[] = [
-    { id: "comedy", label: "Comedy" },
-    { id: "horror", label: "Horror" },
-    { id: "school-life", label: "School Life" },
-    { id: "shotacon", label: "Shotacon" },
-    { id: "web-comic", label: "Web Comic" },
-];
 
 function tabClass(isActive: boolean) {
     return (
@@ -69,9 +35,34 @@ function tabClass(isActive: boolean) {
 
 
 export default function Recommendation(): JSX.Element {
-    const [active, setActive] = useState<TabId>("comedy");
+    const [activeGenreId, setActiveGenreId] = useState<number | null>(null);
 
-    const items = active === "comedy" ? sampleComedy : active === "horror" ? sampleHorror : active === "school-life" ? sampleSchoolLife : active === "shotacon" ? sampleShotacon : sampleWebComic;
+    const { data: recoData, isLoading } = useQuery<RecommendationResponse>({
+        queryKey: ['recommendations'],
+        queryFn: async () => {
+            const response = await axios.get('/api-remote/manga/suggest'); // Thay bằng endpoint thật của bạn
+            return response.data;
+        },
+        staleTime: 1000 * 60 * 5,
+    });
+
+    // 2. Sử dụng useMemo để cố định tham chiếu của genres
+    const genres = useMemo(() => {
+        return recoData?.data || [];
+    }, [recoData?.data]);
+
+    // 3. Bây giờ useEffect sẽ chỉ chạy khi dữ liệu thực sự thay đổi
+    useEffect(() => {
+        if (genres.length > 0 && !activeGenreId) {
+            setActiveGenreId(genres[0].genreId);
+        }
+    }, [genres, activeGenreId]);
+
+    // Lấy danh sách truyện của thể loại đang được chọn
+    const activeGroup = genres.find(g => g.genreId === activeGenreId);
+    const displayItems = activeGroup?.mangas || [];
+
+    if (isLoading) return <div>Loading...</div>;
 
     return (
         <section aria-labelledby="popular-series-heading" className="w-full">
@@ -82,31 +73,16 @@ export default function Recommendation(): JSX.Element {
             <div className="bg-[#222] max-w-7xl mx-auto text-[12px] rounded pb-8">
                 {/* Tabs */}
                 <div className="p-2">
-                    <div
-                        className="bg-[#333] m-[2px] py-[5px] px-[6px] flex justify-center rounded transition-all duration-200"
-                        role="tablist"
-                        aria-label="Popular series range"
-                    >
-                        {TABS.map((tab, index) => {
-                            const isActive = tab.id === active;
-                            const isHiddenOnSmallScreen = index >= 3;
-                            const transitionClasses = isHiddenOnSmallScreen
-                                ? "transition-all duration-300 ease-in-out max-[590px]:opacity-0 max-[590px]:max-w-0 max-[590px]:p-0 max-[590px]:invisible"
-                                : "transition-all duration-300 ease-in-out";
-                            // Hide 4th and 5th items (index 3 and 4) on screens <= 590px
-                            const hiddenClass = index >= 3 ? "max-[590px]:hidden" : "w-[33%]";
-
+                    <div className="bg-[#333] m-[2px] py-[5px] px-[6px] flex justify-center rounded overflow-x-auto" role="tablist">
+                        {genres.map((genre, index) => {
+                            const isActive = genre.genreId === activeGenreId;
                             return (
                                 <button
-                                    key={tab.id}
-                                    id={`tab-${tab.id}`}
-                                    role="tab"
-                                    aria-selected={isActive}
-                                    aria-controls={`panel-${tab.id}`}
-                                    onClick={() => setActive(tab.id)}
-                                    className={`${tabClass(isActive)} ${hiddenClass} ${transitionClasses}`}
+                                    key={genre.genreId}
+                                    onClick={() => setActiveGenreId(genre.genreId)}
+                                    className={`${tabClass(isActive)} ${index >= 3 ? "max-[590px]:hidden" : "w-[33%]"}`}
                                 >
-                                    {tab.label}
+                                    {genre.genreCode}
                                 </button>
                             );
                         })}
@@ -115,86 +91,39 @@ export default function Recommendation(): JSX.Element {
 
                 {/* Content */}
                 <div className="grid grid-cols-3 min-[650px]:grid-cols-4 min-[768px]:grid-cols-5">
-                    {items.map((it, index) => {
-                        // Logic ẩn hiện:
-                        // - Luôn hiện 3 item đầu
-                        // - Item thứ 4 (index 3): chỉ hiện khi màn hình > 480px
-                        // - Item thứ 5 (index 4): chỉ hiện khi màn hình > 600px
+                    {displayItems.map((it, index) => {
                         const visibilityClass =
                             index === 2 ? "hidden min-[480px]:flex" :
                                 index === 3 ? "hidden min-[650px]:flex" :
-                                    index === 4 ? "hidden min-[768px]:flex" :
-                                        index === 5 ? "hidden min-[1024px]:flex" : "flex"; // Dự phòng nếu có nhiều hơn 5 item
-                        const iconSrc = getTypeIcon(it.type);
+                                    index === 4 ? "hidden min-[768px]:flex" : "flex";
+
                         return (
-                            <article key={it.id} className={`w-full ${visibilityClass} bg-transparent rounded-md p-3 flex-col items-start gap-0 cursor-pointer`}>
-                                {/* Cover */}
-                                <Link href={it.href} className="w-full block relative">
-                                    <article className="w-full">
-                                        <div className="relative w-full aspect-[3/4]">
-                                            <Image
-                                                src={it.img}
-                                                fill
-                                                alt={it.title}
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                    </article>
-                                    {/* 💥 THAY THẾ/THÊM ICON 💥 */}
-                                    {iconSrc ? (
-                                        // Hiển thị Icon ảnh ở góc trên bên trái
-                                        <div className="absolute top-0 right-0 z-10 p-[5px] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
-                                            <Image
-                                                src={iconSrc}
-                                                alt={it.type || "Manga"}
-                                                width={25} // Điều chỉnh kích thước icon tại đây
-                                                height={17} // Điều chỉnh kích thước icon tại đây
-                                                className="opacity-90"
-                                            />
-                                        </div>
-                                    ) : (
-                                        // Nếu không có icon ảnh, hiển thị text cũ (hoặc không hiển thị gì)
-                                        // Tôi giữ lại span text cũ nếu không tìm thấy icon để đảm bảo tính an toàn
-                                        <span className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-0.5 rounded">
-                                            {it.type ?? "Manga"}
-                                        </span>
-                                    )}
-                                    {it.colored && (
-                                        <div className="absolute bottom-0 left-0 z-10 p-1">
-                                            <span className="
-                                                              absolute z-10 
-                                                              bottom-[5px] left-[5px] 
-                                                              bg-[#ebcf04] text-[rgba(0,0,0,0.7)] 
-                                                              font-bold text-[10px] 
-                                                              py-[2px] px-[5px] 
-                                                              rounded-[3px] uppercase
-                                                              flex items-center gap-1">
-                                                <i className="fas fa-palette" aria-hidden="true"></i>
-                                                <span>Color</span>
-                                            </span>
-                                        </div>
-                                    )}
-
+                            <article key={it.id} className={`w-full ${visibilityClass} p-3 flex-col cursor-pointer`}>
+                                <Link href={`/manga/${it.id}`} className="w-full block relative">
+                                    <div className="relative w-full aspect-3/4">
+                                        <Image
+                                            src={it.mangaAvatarUrl || ""}
+                                            fill
+                                            alt={it.title}
+                                            className="object-cover rounded-sm"
+                                            sizes="(max-width: 768px) 33vw, 20vw"
+                                        />
+                                    </div>
                                 </Link>
 
-                                {/* Title */}
-                                <Link href={it.href} className="w-full block transition-colors duration-300 hover:text-[#000000]">
-                                    <div className="text-sm my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{it.title}</div>
+                                <Link href={`/manga/${it.id}`} className="w-full block hover:text-indigo-400 transition-colors">
+                                    <div className="text-sm mt-2 font-semibold line-clamp-2 min-h-[40px] text-gray-100">
+                                        {it.title}
+                                    </div>
                                 </Link>
 
-                                {/* Chapter count */}
-                                {it.chapter && (
-                                    <div className={`text-sm text-[#999] ${fira.className}`}>{it.chapter}</div>
-                                )}
+                                <div className={`text-xs text-[#999] mt-1 ${fira.className}`}>
+                                    {it.lastChapter}
+                                </div>
 
-                                {/* Stars */}
                                 <div className="flex items-center gap-1 mt-1">
-                                    <div className="flex items-center">
-                                        <StarRating score={it.score} />
-                                    </div>
-                                    <div className="text-xs text-[#999]">
-                                        {it.score}
-                                    </div>
+                                    <StarRating score={it.rating} />
+                                    <span className="text-xs text-[#999]">{it.rating}</span>
                                 </div>
                             </article>
                         );

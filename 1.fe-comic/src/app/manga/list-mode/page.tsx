@@ -1,7 +1,6 @@
 import Genre from '@/component/genre';
 import SearchBox from '@/component/search-box';
 import SerialPopular from '@/component/serial-popular';
-import { SAMPLE_GENRES } from '@/type/comic-info';
 import TextMangaList from './text-manga-list';
 // Vì trang này sử dụng searchParams, nên cần wrap trong Suspense nếu build static
 // Hoặc đơn giản là component trang
@@ -27,7 +26,7 @@ export default function MangaPage() {
                     <div className="flex flex-col gap-5 col-span-1 lg:col-span-2 min-[880px]:col-span-5">
                         <SearchBox />
                         <SerialPopular />
-                        <Genre genres={SAMPLE_GENRES} />
+                        <Genre />
                     </div>
                 </div>
 

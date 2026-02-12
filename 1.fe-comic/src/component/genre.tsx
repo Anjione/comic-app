@@ -2,18 +2,8 @@
 import Link from 'next/link';
 import React from 'react';
 import { useWindowSize } from '@/hooks/useWindowSize';
-
-// Định nghĩa Interface cho mỗi mục Thể loại
-interface GenreItem {
-    name: string;
-    url: string;
-}
-
-// Định nghĩa Props cho component
-interface GenreProps {
-    genres: GenreItem[];
-    title?: string;
-}
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 // Hàm chunkArray linh hoạt
 const chunkArray = (arr: GenreItem[], size: number) => {
@@ -25,7 +15,21 @@ const chunkArray = (arr: GenreItem[], size: number) => {
     return result.slice(0, size); // Đảm bảo luôn trả về đúng số cột mong muốn
 };
 
-export default function Genre({ genres, title = 'Genre' }: GenreProps) {
+export default function Genre() {
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const { data: genreResponse } = useQuery<GenreResponse>({
+        queryKey: ['genre'],
+        queryFn: async () => {
+            const response = await axios.get('/api-remote/genre'); // Thay bằng endpoint thật của bạn
+            return response.data;
+        },
+        staleTime: 1000 * 60 * 30, // Thể loại ít thay đổi, nên để cache lâu (30 phút)
+    });
 
     // Style chung cho các thẻ thể loại
     const tagClasses = `
@@ -41,11 +45,13 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
 
     // Logic chia cột dựa trên breakpoint 880px bạn đã cài trong config
     // Nếu width < 880 thì chia 2, ngược lại chia 3
-    const columnCount = windowWidth < 880 ? 2 : 3;
+    // Ensure consistent rendering during hydration by using default (mobile) view until mounted
+    const genres = genreResponse?.data || [];
+    const columnCount = (!mounted || windowWidth < 880) ? 2 : 3;
     const columns = chunkArray(genres, columnCount);
 
     // Style cho đường kẻ dọc
-    const dividerClasses = "w-[1px] h-full bg-[#312f40]";
+    // const dividerClasses = "w-[1px] h-full bg-[#312f40]";
 
     return (
         // Sử dụng Tailwind cho styling container
@@ -54,7 +60,7 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
             {/* Tiêu đề */}
             <div className="release">
                 <h2 className="font-semibold">
-                    {title}
+                    Genre
                 </h2>
             </div>
 
@@ -70,9 +76,11 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
                         {/* Cột dữ liệu */}
                         <ul className="space-y-1 mt-2 mb-3 overflow-hidden text-ellipsis">
                             {column.map((genre) => (
-                                <li key={genre.url}>
-                                    <Link href={genre.url} className={tagClasses}>
-                                        {genre.name}
+                                <li key={genre.id}>
+                                    <Link
+                                        href={`/genre/${genre.code.toLowerCase().replace(/\s+/g, '-')}`}
+                                        className={tagClasses}>
+                                        {genre.code}
                                     </Link>
                                 </li>
                             ))}
@@ -81,7 +89,7 @@ export default function Genre({ genres, title = 'Genre' }: GenreProps) {
                         {/* Divider logic */}
                         {colIndex < columns.length - 1 && (
                             <div
-                                className={`${columnCount === 2 ? 'hidden' : 'block'} mx-2 border-l border-[#312f40] h-[100%] self-center`}
+                                className={`${columnCount === 2 ? 'hidden' : 'block'} mx-2 border-l border-[#312f40] h-full self-center`}
                                 aria-hidden="true"
                             />
                         )}
