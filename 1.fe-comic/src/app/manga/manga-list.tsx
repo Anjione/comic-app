@@ -1,28 +1,37 @@
-import Link from 'next/link';
-import React from 'react';
-import Image from "next/image";
-import StarRating from '../../component/star-rating';
-import { SeriesItem } from '../../type/comic-info';
-import { fira } from "@/lib/fonts";
-import Pagination from '../../component/pagination';
-import { Constants } from '../../constants';
+"use client";
 import QuickFilter from '@/component/quick-filter';
 import { getTypeIcon } from '@/lib/common-util';
-
+import { fira } from "@/lib/fonts";
+import { MangaData } from '@/type/manga';
+import axios from 'axios';
+import Image from "next/image";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import Pagination from '../../component/pagination';
+import StarRating from '../../component/star-rating';
+import { Constants } from '../../constants';
 
 
 export default function MangaList({ order }: { order?: string | string[] }) {
+    // const NoSSRComponent = dynamic(() => import('./manga-list'), { ssr: false });
+    const [bookmarks, setMangas] = useState<MangaData[]>([]);
+    // const [loading, setLoading] = useState<boolean>(true);
+    useEffect(() => {
+        const fetchMangaList = async () => {
+            try {
+                const response = await axios.get('/api-remote/manga');
+                if (response['data']['status'] === 200) {
+                    setMangas(response['data']['data']); // Map mảng danh sách truyện vào state
+                }
+            } catch (error) {
+                console.error("Lỗi fetch danh sách truyện:", error);
+            } finally {
+                // setLoading(false);
+            }
+        };
 
-    const bookmarks: SeriesItem[] = [
-        { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://plus.unsplash.com/premium_photo-1666700698946-fbf7baa0134a?q=80&w=736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
-        { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7, type: "Manhwa", colored: true },
-        { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
-        { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
-        { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1611457194403-d3aca4cf9d11?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
-        { id: 6, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
-        { id: 7, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1590796583326-afd3bb20d22d?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
-        { id: 8, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
-    ];
+        fetchMangaList();
+    }, []);
 
     const total = bookmarks.length;
     const totalPages = Math.max(1, Math.ceil(total / Constants.DEFAULT_PAGE_SIZE));
@@ -58,15 +67,15 @@ export default function MangaList({ order }: { order?: string | string[] }) {
             </div>
             <div className="grid grid-cols-3 min-[670px]:grid-cols-5 gap-4 p-5">
                 {pageItems.map((it) => {
-                    const iconSrc = getTypeIcon(it.type);
+                    const iconSrc = getTypeIcon(it.type || "Manga");
                     return (
                         <article key={it.id} className={`w-full bg-transparent rounded-md flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer`}>
                             {/* Cover */}
-                            <Link href={it.href} className="w-full block">
+                            <Link href="#" className="w-full block">
                                 <article className="w-full">
-                                    <div className="relative w-full aspect-[3/4]">
+                                    <div className="relative w-full aspect-3/4">
                                         <Image
-                                            src={it.img}
+                                            src={it.mangaAvatarUrl}
                                             fill
                                             alt={it.title}
                                             className="object-cover"
@@ -111,22 +120,22 @@ export default function MangaList({ order }: { order?: string | string[] }) {
                             </Link>
 
                             {/* Title */}
-                            <Link href={it.href} className="w-full block">
+                            <Link href="#" className="w-full block">
                                 <div className="text-sm my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{it.title}</div>
                             </Link>
 
                             {/* Chapter count */}
-                            {it.chapter && (
-                                <div className={`text-sm text-[#999] ${fira.className}`}>{it.chapter}</div>
+                            {it.lastChapter && (
+                                <div className={`text-sm text-[#999] ${fira.className}`}>{it.lastChapter}</div>
                             )}
 
                             {/* Stars */}
                             <div className="flex items-center gap-1 mt-1">
                                 <div className="flex items-center">
-                                    <StarRating score={it.score} />
+                                    <StarRating score={it.rating} />
                                 </div>
                                 <div className="text-xs text-[#999]">
-                                    {it.score}
+                                    {it.rating}
                                 </div>
                             </div>
                         </article>

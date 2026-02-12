@@ -9,6 +9,7 @@ export default function PaginationNumber({ total, pageSize, page, basePath, para
 
     const previousPage = current - 1;
     const nextPage = current + 1;
+    console.log("param", param);
 
     // Class Styling... (Giữ nguyên)
     const buttonClasses = "flex items-center px-8 py-1 text-sm font-medium bg-black rounded-xs transition-colors duration-500 whitespace-nowrap";

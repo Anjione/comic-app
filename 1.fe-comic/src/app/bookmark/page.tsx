@@ -2,7 +2,6 @@ import BookmarkCard from '@/app/bookmark/bookmark-card';
 import Genre from '@/component/genre';
 import SearchBox from '@/component/search-box';
 import SerialPopular from '@/component/serial-popular';
-import { SAMPLE_GENRES } from '@/type/comic-info';
 
 export default function BookmarkPage() {
     return (
@@ -18,7 +17,7 @@ export default function BookmarkPage() {
                     <div className="flex flex-col gap-5 col-span-1 lg:col-span-2 xl:col-span-5">
                         <SearchBox />
                         <SerialPopular />
-                        <Genre genres={SAMPLE_GENRES} />
+                        <Genre />
                     </div>
                 </div>
 

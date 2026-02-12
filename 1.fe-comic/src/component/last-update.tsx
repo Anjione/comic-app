@@ -1,30 +1,32 @@
 // Thêm Image vào import
+import { getTypeColor, getTypeIcon } from "@/lib/common-util";
 import { fira } from "@/lib/fonts";
+import { LatestMangaResponse, MangaData } from "@/type/manga";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import Pagination from "./pagination";
-import { getTypeIcon, getTypeColor } from "@/lib/common-util";
 
 // ... (các imports khác)
 // ---------------------------------
 
 // (Các interface và logic phân trang giữ nguyên)
 interface Chapter {
-  url: string;
-  title: string;
-  timeAgo?: string;
-  timeago?: string;
+  url: string; // link đến trang chapter
+  title: string; // tên chapter
+  timeAgo?: string; // thời gian cập nhật
 }
 
 interface ComicItem {
-  id: string;
-  title: string;
-  url: string;
-  cover: string;
-  type?: string;
-  isNew?: boolean;
-  status?: string;
-  chapters?: Chapter[];
+  id: string; // id của truyện
+  title: string; // tên truyện
+  url: string; // link đến trang truyện
+  cover: string; // link ảnh của truyện
+  type?: string; // manga, manhwa, manhua
+  isNew?: boolean; // có phải truyện mới không
+  status?: string; // on-going, completed
+  chapters?: Chapter[]; // danh sách các chapter nhưng chỉ cần trả tối đa 3 chapter mới nhất thôi
 }
 
 interface LatestUpdateProps {
@@ -35,16 +37,41 @@ interface LatestUpdateProps {
   basePath?: string;
 }
 
-export default function LatestUpdate({ items, page = 1,
+export default function LatestUpdate({ page = 1,
   pageSize = 20,
   basePath = "/page" }: LatestUpdateProps) {
 
+  const { data: latestMangaResponse } = useQuery<LatestMangaResponse>({
+    queryKey: ['lastest-update'],
+    // queryFn vẫn phải khai báo để React Query có thể fetch lại khi dữ liệu cũ (stale)
+    queryFn: async () => {
+      const response = await axios.get('/api-remote/manga/lastUpdate?pageNum=1&pageSize=20');
+      return response.data;
+    },
+    initialData: {
+      timestamp: "",
+      status: 200,
+      data: [],
+      paging: {
+        pageNum: 1,
+        pageSize: 20,
+        totalRecords: 0,
+        totalPages: 1,
+        validPageNum: true,
+        validPageSize: true,
+      },
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const mangas = latestMangaResponse.data;
+  const paging = latestMangaResponse.paging;
   // Logic phân trang... (Giữ nguyên)
-  const total = items.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const total = paging.totalRecords;
+  const totalPages = paging.totalPages;
   const current = Math.min(Math.max(1, page), totalPages);
   const start = (current - 1) * pageSize;
-  const pageItems = items.slice(start, start + pageSize);
+  const pageItems = mangas.slice(start, start + pageSize);
 
   return (
     <section className="bixbox bg-[#222222] shadow">
@@ -58,18 +85,18 @@ export default function LatestUpdate({ items, page = 1,
       </div>
       {/* Grid 2 cột */}
       <div className="listupd grid grid-cols-1 min-[670px]:grid-cols-2 gap-0 pt-2 px-2">
-        {pageItems.map((c: ComicItem) => {
+        {pageItems.map((c: MangaData) => {
 
           // 1. Lấy đường dẫn icon
           const iconSrc = getTypeIcon(c.type);
 
           return (
             <article key={c.id} className="utao styletwo flex gap-3 px-2 py-4 transition border-b border-[#333]">
-              <Link href={c.url} className="imgu relative w-[110px] h-[150px] rounded overflow-hidden shrink-0">
+              <Link href="#" className="imgu relative w-[110px] h-[150px] rounded overflow-hidden shrink-0">
 
                 {/* Ảnh bìa (Giữ nguyên) */}
                 <Image
-                  src={c.cover}
+                  src={c.mangaAvatarUrl}
                   alt={c.title}
                   fill
                   sizes="(max-width:640px) 30vw, (max-width:1024px) 25vw, 140px"
@@ -93,7 +120,7 @@ export default function LatestUpdate({ items, page = 1,
                   // Nếu không có icon ảnh, hiển thị text cũ (hoặc không hiển thị gì)
                   // Tôi giữ lại span text cũ nếu không tìm thấy icon để đảm bảo tính an toàn
                   <span className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-0.5 rounded">
-                    {c.type ?? "Manga"}
+                    {c.type ?? ""}
                   </span>
                 )}
 
@@ -103,7 +130,7 @@ export default function LatestUpdate({ items, page = 1,
 
               {/* Phần thông tin truyện còn lại (Giữ nguyên) */}
               <div className="luf flex-1 min-w-0">
-                <Link href={c.url} className="block hover:text-black transition-colors duration-300">
+                <Link href="#" className="block hover:text-black transition-colors duration-300">
                   <h3 className="text-[15px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-1">
                     {c.title}
                   </h3>
@@ -111,7 +138,7 @@ export default function LatestUpdate({ items, page = 1,
 
                 {c.chapters && (
                   <ul className="mt-2 space-y-1">
-                    {c.chapters.slice(0, 3).map((ch: Chapter, idx: number) => {
+                    {c.chapters.slice(0, 3).map((ch, idx) => {
                       // Lấy màu dựa trên type truyện
                       const bulletColor = getTypeColor(c.type);
 
@@ -122,15 +149,15 @@ export default function LatestUpdate({ items, page = 1,
                             <span className={`mr-2 shrink-0 text-lg leading-none ${bulletColor}`}>•</span>
 
                             <Link
-                              href={ch.url}
+                              href="#"
                               className={`chapter-font text-[#999] hover:text-white transition-colors truncate ${fira.className}`}
                             >
-                              {ch.title}
+                              {ch.chapterName}
                             </Link>
                           </div>
 
                           <span className={`text-[0.8rem] text-[#999] shrink-0 ${fira.className}`}>
-                            {ch.timeAgo ?? ch.timeago}
+                            {ch.timeAgo}
                           </span>
                         </li>
                       );
@@ -150,7 +177,7 @@ export default function LatestUpdate({ items, page = 1,
       </div>
 
       {/* Pagination */}
-      <Pagination total={items.length} page={page} pageSize={pageSize} basePath={basePath} />
+      <Pagination total={total} page={page} pageSize={pageSize} basePath={basePath} />
     </section>
   );
 }
