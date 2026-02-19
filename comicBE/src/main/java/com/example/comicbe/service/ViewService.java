@@ -25,4 +25,6 @@ public interface ViewService {
     void rebuildTotalView();
 
     void syncView(Manga manga);
+
+    void jobPushViewDaily();
 }

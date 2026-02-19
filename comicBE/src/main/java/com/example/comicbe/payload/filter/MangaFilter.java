@@ -16,5 +16,8 @@ public class MangaFilter extends BaseFilter {
     private String title;
     private String category;
     private List<String> genre;
+    private List<String> status;
+    private String direction;
+    private String fieldSort;
 
 }

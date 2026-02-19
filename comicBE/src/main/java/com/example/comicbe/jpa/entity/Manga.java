@@ -27,7 +27,7 @@ public class Manga extends BaseEntity{
     @JoinColumn(name = "category_id")
     private MangaCategory category;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "manga_genre",
             joinColumns = @JoinColumn(name = "manga_id"),

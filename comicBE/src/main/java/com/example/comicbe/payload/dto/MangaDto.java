@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -25,7 +26,7 @@ public class MangaDto implements Serializable {
     private Double rating;
     private String createdDate;
     private String lastChapter;
-    private String modifiedBy;
+    private LocalDateTime modifiedDate;
     private String createdBy;
     private String mangaCategory;
     private List<String> genres;

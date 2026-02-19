@@ -1,14 +1,21 @@
 package com.example.comicbe.service.manga;
 
+import com.example.comicbe.jpa.entity.Chapter;
 import com.example.comicbe.jpa.entity.Manga;
 import com.example.comicbe.jpa.entity.MangaGenre;
+import com.example.comicbe.jpa.repository.ChapterRepository;
+import com.example.comicbe.jpa.repository.GenreRepository;
+import com.example.comicbe.jpa.repository.MangaByGenreRow;
 import com.example.comicbe.jpa.repository.MangaRepository;
-import com.example.comicbe.jpa.specs.MangaSpecs;
+import com.example.comicbe.jpa.spectification.specs.MangaSpecs;
 import com.example.comicbe.payload.dto.ChapterDto;
+import com.example.comicbe.payload.dto.GenreDto;
 import com.example.comicbe.payload.dto.MangaDto;
 import com.example.comicbe.payload.filter.MangaFilter;
 import com.example.comicbe.payload.paging.PagingFilterBase;
+import com.example.comicbe.payload.reponse.GenreMangaResponse;
 import com.example.comicbe.payload.reponse.ResponseMessage;
+import com.example.comicbe.service.GenreService;
 import com.example.comicbe.service.MangaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -17,13 +24,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,6 +40,14 @@ public class MangaServiceImpl implements MangaService {
 
     @Autowired
     private MangaSpecs mangaSpecs;
+    @Autowired
+    private ChapterRepository chapterRepository;
+
+    @Autowired
+    private GenreRepository genreRepository;
+
+    @Autowired
+    private GenreService genreService;
 
     private void insert(MangaDto mangaDto) {
         Manga manga = new Manga();
@@ -62,6 +76,92 @@ public class MangaServiceImpl implements MangaService {
                 .toList();
     }
 
+
+    @Cacheable(cacheNames = "mangaService.mangaMap", keyGenerator = "keyGenerator")
+    @Override
+    public Map<Long, MangaDto> mangaMap() {
+        List<Manga> mangas = mangaRepository.findAll();
+        return mangas.stream()
+                .sorted(Comparator.comparing(Manga::getTitle))
+                .map(m -> {
+                    MangaDto mangaDto = new MangaDto();
+                    BeanUtils.copyProperties(m, mangaDto);
+                    return mangaDto;
+                })
+                .collect(Collectors.toMap(MangaDto::getId, mangaDto -> mangaDto));
+    }
+
+    @Override
+    public List<GenreDto> getSuggest() {
+        Long now = Instant.now().toEpochMilli();
+        log.info("1: {}", (Instant.now().toEpochMilli() - now));
+        List<GenreDto> genreDtos = genreService.fetchAll();
+        List<GenreDto> random = new ArrayList<>();
+        if (genreDtos.size() > 5) {
+            random = new ArrayList<>(genreDtos.subList(0, 5));
+        } else {
+            random = genreDtos;
+        }
+
+        log.info("2: {}", Instant.now().toEpochMilli() - now);
+
+        List<MangaGenre> mangaGenres = genreRepository.findLatest3ChaptersByMangaIds2(random.stream().map(GenreDto::getId).toList(), 1L);
+        log.info("3: {}", Instant.now().toEpochMilli() - now);
+        List<GenreDto> genreDtos1 = mangaGenres.stream().map(mangaGenre -> {
+            GenreDto genreDto = new GenreDto(mangaGenre);
+            List<MangaDto> mangas = mangaGenre.getMangas().stream()
+                    .sorted(Comparator.comparing(Manga::getTitle))
+                    .map(m -> {
+                        MangaDto mangaDto = new MangaDto();
+                        BeanUtils.copyProperties(m, mangaDto);
+                        return mangaDto;
+                    })
+                    .toList();
+            genreDto.setMangas(mangas);
+            return genreDto;
+        }).toList();
+        log.info("4: {}", Instant.now().toEpochMilli() - now);
+        return genreDtos1;
+
+    }
+
+    @Override
+    public List<GenreMangaResponse> getTop5MangaByGenres() {
+        List<GenreDto> genreDtos = genreService.fetchAll();
+        List<GenreDto> random = new ArrayList<>();
+        if (genreDtos.size() > 5) {
+            random = new ArrayList<>(genreDtos.subList(0, 5));
+        } else {
+            random = genreDtos;
+        }
+        List<MangaByGenreRow> rows =
+                mangaRepository.findTop5MangaByGenres(random.stream().map(GenreDto::getId).toList());
+
+        Map<Long, GenreMangaResponse> map = new LinkedHashMap<>();
+        Map<Long, MangaDto> mapManga = mangaMap();
+
+        for (MangaByGenreRow row : rows) {
+            GenreMangaResponse response = map.computeIfAbsent(
+                    row.getGenreId(),
+                    id -> {
+                        GenreMangaResponse g = new GenreMangaResponse();
+                        g.setGenreId(row.getGenreId());
+                        g.setGenreCode(row.getGenreCode());
+                        return g;
+                    }
+            );
+            if (mapManga.containsKey(row.getMangaId())) {
+                response.getMangas().add(
+                        mapManga.get(row.getMangaId())
+                );
+            }
+
+
+        }
+
+        return new ArrayList<>(map.values());
+    }
+
     @Override
     @Cacheable(cacheNames = "mangaService.groupFirstString", keyGenerator = "keyGenerator")
     public Map<Character, List<MangaDto>> groupFirstString() {
@@ -83,10 +183,30 @@ public class MangaServiceImpl implements MangaService {
 
         if (!mangaFilter.isPageable()) {
             log.info("get manga no pageable");
-            mangas.addAll(mangaRepository.findAll(mangaSpec));
+            Sort.Direction direction = Optional.ofNullable(mangaFilter.getFilter())
+                    .map(f -> f.getDirection())
+                    .map(Sort.Direction::fromString)
+                    .orElse(Sort.Direction.ASC);
+
+            String field = Optional.ofNullable(mangaFilter.getFilter())
+                    .map(f -> f.getFieldSort())
+                    .orElse("id");
+
+            Sort sort = Sort.by(direction, field);
+            mangas.addAll(mangaRepository.findAll(mangaSpec, sort));
         } else {
             log.info("get manga with pageable");
-            Page<Manga> mangasPage = mangaRepository.findAll(mangaSpec, PageRequest.of(mangaFilter.getPageNum(), mangaFilter.getPageSize()));
+            Sort.Direction direction = Optional.ofNullable(mangaFilter.getFilter())
+                    .map(f -> f.getDirection())
+                    .map(Sort.Direction::fromString)
+                    .orElse(Sort.Direction.ASC);
+
+            String field = Optional.ofNullable(mangaFilter.getFilter())
+                    .map(f -> f.getFieldSort())
+                    .orElse("id");
+
+            Sort sort = Sort.by(direction, field);
+            Page<Manga> mangasPage = mangaRepository.findAll(mangaSpec, PageRequest.of(mangaFilter.getPageNum(), mangaFilter.getPageSize(), sort));
             mangaFilter.getPaging().setTotalRecords(mangasPage.getTotalElements());
             mangaFilter.getPaging().setTotalPages(mangasPage.getTotalPages());
             mangas = mangasPage.getContent();
@@ -98,7 +218,60 @@ public class MangaServiceImpl implements MangaService {
                     MangaDto mangaDto = new MangaDto();
                     BeanUtils.copyProperties(m, mangaDto);
 //                    mangaDto.setGenres(m.getGenres().stream().map(MangaGenre::getCode).toList());
-                    mangaDto.setMangaCategory(m.getCategory().getCode());
+                    if (Objects.nonNull(m.getCategory())){
+                        mangaDto.setMangaCategory(m.getCategory().getCode());
+
+                    }
+
+                    return mangaDto;
+                })
+                .toList();
+
+        return new ResponseMessage<>(respones, mangaFilter.getPaging());
+
+    }
+
+    @Override
+    public ResponseMessage getLastUpdate(PagingFilterBase<MangaFilter> mangaFilter) {
+        log.info("start retrive manga");
+        Specification<Manga> mangaSpec = mangaSpecs.mangaFilterSpecification(mangaFilter.getFilter());
+        List<Manga> mangas = new ArrayList<>();
+
+        if (!mangaFilter.isPageable()) {
+            log.info("get manga no pageable");
+            mangas.addAll(mangaRepository.findAll(mangaSpec, Sort.by(Sort.Direction.DESC, "modifiedDate")));
+        } else {
+            log.info("get manga with pageable");
+            Page<Manga> mangasPage = mangaRepository.findAll(mangaSpec, PageRequest.of(mangaFilter.getPageNum(), mangaFilter.getPageSize(), Sort.by(Sort.Direction.DESC, "modifiedBy")));
+            mangaFilter.getPaging().setTotalRecords(mangasPage.getTotalElements());
+            mangaFilter.getPaging().setTotalPages(mangasPage.getTotalPages());
+            mangas = mangasPage.getContent();
+        }
+        List<Long> ids = mangas.stream().map(Manga::getId).collect(Collectors.toSet()).stream().toList();
+
+        List<Chapter> chapters = chapterRepository.findLatest3ChaptersByMangaIds(ids, 3L);
+        Map<Long, List<ChapterDto>> chapterMap = chapters.stream()
+                .map(chapter -> {
+                    ChapterDto dto = new ChapterDto();
+                    dto.setMangaId(chapter.getManga().getId());
+                    BeanUtils.copyProperties(chapter, dto, "images");
+                    return dto;
+                })
+                .collect(Collectors.groupingBy(ChapterDto::getMangaId));
+
+        List<MangaDto> respones = mangas.stream()
+                .sorted(Comparator.comparing(Manga::getTitle))
+                .map(m -> {
+                    MangaDto mangaDto = new MangaDto();
+                    BeanUtils.copyProperties(m, mangaDto);
+//                    mangaDto.setGenres(m.getGenres().stream().map(MangaGenre::getCode).toList());
+//                    mangaDto.setMangaCategory(m.getCategory().getCode());
+                    if (chapterMap.containsKey(m.getId())) {
+                        mangaDto.setChapters(chapterMap.get(m.getId()));
+                    }
+                    if (Objects.nonNull(m.getCategory())) {
+                        mangaDto.setMangaCategory(m.getCategory().getCode());
+                    }
 
                     return mangaDto;
                 })

@@ -78,6 +78,37 @@ CREATE TABLE genre (
                        description VARCHAR(255)
 );
 
+CREATE TABLE roles (
+                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                       name VARCHAR(255) UNIQUE NOT NULL,
+                       created_date TIMESTAMP DEFAULT NOW(),
+                       modified_date TIMESTAMP DEFAULT NOW(),
+                       created_by VARCHAR(255),
+                       modified_by VARCHAR(255)
+);
+
+CREATE TABLE users (
+                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                       username VARCHAR(255) UNIQUE NOT NULL,
+                       password VARCHAR(255) NOT NULL,
+                       email VARCHAR(255) NOT NULL,
+                       enabled bool NOT NULL,
+                       created_date TIMESTAMP DEFAULT NOW(),
+                       modified_date TIMESTAMP DEFAULT NOW(),
+                       created_by VARCHAR(255),
+                       modified_by VARCHAR(255)
+);
+
+CREATE TABLE user_roles (
+                            user_id INT NOT NULL,
+                            role_id INT NOT NULL,
+                            created_date TIMESTAMP DEFAULT NOW(),
+                            modified_date TIMESTAMP DEFAULT NOW(),
+                            created_by VARCHAR(255),
+                            modified_by VARCHAR(255),
+                            PRIMARY KEY (user_id, role_id)
+);
+
 ALTER TABLE manga
     ADD COLUMN category_id BIGINT AFTER id;
 
@@ -102,6 +133,73 @@ CREATE TABLE manga_genre (
                                  FOREIGN KEY (genre_id) REFERENCES genre(id)
                                      ON DELETE CASCADE
 );
+
+
+CREATE TABLE email_template
+(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    created_date      timestamp default now(),
+    modified_date     timestamp default now(),
+    created_by        varchar(255),
+    modified_by       varchar(255),
+    template_name      varchar(255) not null,
+    template_code      varchar(100) not null,
+    template_key       varchar(200) not null,
+    status            smallint,
+    content           TEXT
+);
+
+CREATE TABLE email_log
+(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    created_date      timestamp default now(),
+    modified_date     timestamp default now(),
+    created_by        varchar(255),
+    modified_by       varchar(255),
+    email_to          varchar(255) not null,
+    sent_time         timestamp default now(),
+    subject           varchar(1000) not null,
+    content           TEXT,
+    type              varchar(50)
+);
+
+
+CREATE TABLE sys_config(
+                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                           created_date TIMESTAMP DEFAULT NOW(),
+                           modified_date TIMESTAMP DEFAULT NOW(),
+                           created_by VARCHAR(255),
+                           modified_by VARCHAR(255),
+                           code VARCHAR(50),
+                           value VARCHAR(150)
+);
+
+CREATE INDEX idx_sys_config_id ON sys_config(id);
+CREATE INDEX idx_sys_config_code ON sys_config(code);
+
+create index idx_email_log_email_to on email_log (email_to);
+create index idx_email_log_sent_time on email_log (sent_time);
+create index idx_email_log_subject on email_log (subject);
+
+create index idx_email_template_code on email_template (template_code);
+create index idx_email_template_id on email_template (id);
+
+ALTER TABLE email_template ADD COLUMN is_config bool;
+ALTER TABLE email_template ADD COLUMN type varchar(50);
+
+ALTER TABLE user_roles ADD CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+ALTER TABLE user_roles ADD CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE;
+
+
+
+-- Index for Roles (Primary Key is already indexed by default)
+CREATE INDEX idx_roles_name ON roles(name);
+
+CREATE INDEX idx_user_roles_user ON user_roles(user_id);
+CREATE INDEX idx_user_roles_role ON user_roles(role_id);
+
+CREATE INDEX idx_roles_created_date ON roles(created_date);
+CREATE INDEX idx_roles_modified_date ON roles(modified_date);
 
 
 
@@ -195,3 +293,6 @@ INSERT INTO category  (code) VALUES
 ALTER TABLE comic.manga ADD manga_category varchar(100) NULL;
 ALTER TABLE articles
     ADD FULLTEXT idx_ft_title_content (title, content);
+
+CREATE INDEX idx_chapter_manga_created
+    ON chapter (manga_id, created_at DESC);

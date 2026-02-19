@@ -10,6 +10,7 @@ import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -28,6 +29,7 @@ public class GenreServiceImpl implements GenreService {
     private MangaRepository mangaRepository;
 
     @Override
+    @Cacheable(cacheNames = "mangaService.genres", keyGenerator = "keyGenerator")
     public List<GenreDto> fetchAll(){
         List<MangaGenre> genres = genreRepository.findAll();
         return genres.stream().map(mangaGenre -> new GenreDto(mangaGenre)).toList();

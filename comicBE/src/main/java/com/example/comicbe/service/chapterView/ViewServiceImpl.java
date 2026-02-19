@@ -2,9 +2,14 @@ package com.example.comicbe.service.chapterView;
 
 import com.example.comicbe.jpa.entity.Manga;
 import com.example.comicbe.jpa.repository.MangaRepository;
+import com.example.comicbe.payload.dto.MangaDto;
+import com.example.comicbe.service.MangaService;
 import com.example.comicbe.service.ViewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -34,6 +39,9 @@ public class ViewServiceImpl implements ViewService {
 
     @Autowired
     private MangaRepository mangaRepository;
+
+    @Autowired
+    private MangaService mangaService;
 
     private static final String VIEW_KEY = "manga:view:total:"; // chapter:view:123 = 50 views
     private static final String VIEW_KEY_PORPULAR_DAY = "manga:view:day:";
@@ -148,7 +156,7 @@ public class ViewServiceImpl implements ViewService {
                     byte[] year = serializer.serialize(yearKey);
                     byte[] total = serializer.serialize(totalKey);
 
-                    connection.zRevRange(day, start, end);
+                    connection.zRevRange(day, 0, 14);
                     connection.zRevRange(week, start, end);
                     connection.zRevRange(month, start, end);
                     connection.zRevRange(year, start, end);
@@ -366,5 +374,18 @@ public class ViewServiceImpl implements ViewService {
         mangaRepository.saveAll(mangas);
 
         log.info("done batch upadate view");
+    }
+
+
+    @Transactional
+    @Scheduled(cron = "1 0 0 * * *")
+    @Override
+    public void jobPushViewDaily() {
+//        List<MangaDto> mangaDtos = mangaService.getLastUpdate().getData();
+        Pageable pageable = PageRequest.of(0, 15, Sort.by(Sort.Direction.DESC, "modifiedBy"));
+        List<Manga> mangas = mangaRepository.findAll(pageable).getContent();
+        for (Manga manga : mangas){
+            this.increaseViewV2(manga.getId());
+        }
     }
 }

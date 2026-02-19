@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -25,6 +26,8 @@ public class GenreDto implements Serializable {
     private String code;
 
     private String slug;
+
+    private List<MangaDto> mangas;
 
     public GenreDto(MangaGenre mangaGenre) {
         BeanUtils.copyProperties(mangaGenre, this);

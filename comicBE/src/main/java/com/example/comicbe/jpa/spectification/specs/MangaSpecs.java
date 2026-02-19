@@ -1,4 +1,4 @@
-package com.example.comicbe.jpa.specs;
+package com.example.comicbe.jpa.spectification.specs;
 
 import com.example.comicbe.jpa.entity.*;
 import com.example.comicbe.payload.filter.MangaFilter;
@@ -49,10 +49,18 @@ public class MangaSpecs {
 //                        )
 //                );
 //            }
+//            Join<Manga, MangaGenre> genreJoin = root.join(Manga_.genres);
+//
+//            predicates.add(
+//                    criteriaBuilder.equal(genreJoin.get(MangaGenre_.code), mangaFilter.getGenre())
+//            );
 
             if (!CollectionUtils.isEmpty(mangaFilter.getGenre())) {
-//                predicates.add(new CriteriaBuilder.In(root.join(MangaGenre_.MANGAS).get(String.valueOf(MangaGenre_.code)), mangaFilter.getGenre()));
-            }
+                Join<Manga, MangaGenre> genreJoin = root.join(Manga_.genres);
+
+                predicates.add(
+                        genreJoin.get(MangaGenre_.code).in(mangaFilter.getGenre())
+                );            }
 
 
             return concatenatePredicate(predicates, criteriaBuilder);
