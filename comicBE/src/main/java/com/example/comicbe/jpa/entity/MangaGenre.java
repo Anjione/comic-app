@@ -1,9 +1,6 @@
 package com.example.comicbe.jpa.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +18,6 @@ public class MangaGenre extends BaseEntity {
 
     private String slug;
 
-    @ManyToMany(mappedBy = "genres")
-    private Set<Manga> mangas;
+    @OneToMany(mappedBy = "genre")
+    Set<MangaGenreMapping> genreMappings;
 }

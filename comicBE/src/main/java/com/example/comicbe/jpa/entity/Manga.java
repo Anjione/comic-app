@@ -27,13 +27,8 @@ public class Manga extends BaseEntity{
     @JoinColumn(name = "category_id")
     private MangaCategory category;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "manga_genre",
-            joinColumns = @JoinColumn(name = "manga_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
-    private Set<MangaGenre> genres;
+    @OneToMany(mappedBy = "manga")
+    Set<MangaGenreMapping> genreMappings;
 
     @OneToMany(mappedBy = "manga", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private Set<Chapter> chapters;
