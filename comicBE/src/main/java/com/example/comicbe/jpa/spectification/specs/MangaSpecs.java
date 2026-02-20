@@ -2,10 +2,7 @@ package com.example.comicbe.jpa.spectification.specs;
 
 import com.example.comicbe.jpa.entity.*;
 import com.example.comicbe.payload.filter.MangaFilter;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -60,7 +57,26 @@ public class MangaSpecs {
 
                 predicates.add(
                         genreJoin.get(MangaGenre_.code).in(mangaFilter.getGenre())
-                );            }
+                );
+            }
+
+            if (!CollectionUtils.isEmpty(mangaFilter.getGenreNotIn())) {
+
+                Subquery<Long> subquery = query.subquery(Long.class);
+                Root<Manga> subRoot = subquery.from(Manga.class);
+                Join<Manga, MangaGenre> subJoin = subRoot.join(Manga_.genres);
+
+                subquery.select(subRoot.get(Manga_.id))
+                        .where(
+                                criteriaBuilder.and(
+                                        criteriaBuilder.equal(subRoot.get(Manga_.id), root.get(Manga_.id)),
+                                        subJoin.get(MangaGenre_.code)
+                                                .in(mangaFilter.getGenreNotIn())
+                                )
+                        );
+
+                predicates.add(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
+            }
 
 
             return concatenatePredicate(predicates, criteriaBuilder);

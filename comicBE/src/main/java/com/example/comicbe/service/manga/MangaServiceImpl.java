@@ -183,29 +183,49 @@ public class MangaServiceImpl implements MangaService {
 
         if (!mangaFilter.isPageable()) {
             log.info("get manga no pageable");
-            Sort.Direction direction = Optional.ofNullable(mangaFilter.getFilter())
-                    .map(f -> f.getDirection())
-                    .map(Sort.Direction::fromString)
-                    .orElse(Sort.Direction.ASC);
 
-            String field = Optional.ofNullable(mangaFilter.getFilter())
+            Sort sort = Optional.ofNullable(mangaFilter.getFilter())
                     .map(f -> f.getFieldSort())
-                    .orElse("id");
+                    .map(s -> {
+                        String[] parts = s.split(",");
 
-            Sort sort = Sort.by(direction, field);
+                        String field = parts[0].trim();
+                        Sort.Direction direction = Sort.Direction.ASC;
+
+                        if (parts.length > 1) {
+                            try {
+                                direction = Sort.Direction.fromString(parts[1].trim());
+                            } catch (IllegalArgumentException e) {
+                                direction = Sort.Direction.ASC;
+                            }
+                        }
+
+                        return Sort.by(direction, field);
+                    })
+                    .orElse(Sort.by(Sort.Direction.ASC, "id"));
             mangas.addAll(mangaRepository.findAll(mangaSpec, sort));
         } else {
             log.info("get manga with pageable");
-            Sort.Direction direction = Optional.ofNullable(mangaFilter.getFilter())
-                    .map(f -> f.getDirection())
-                    .map(Sort.Direction::fromString)
-                    .orElse(Sort.Direction.ASC);
-
-            String field = Optional.ofNullable(mangaFilter.getFilter())
+            Sort sort = Optional.ofNullable(mangaFilter.getFilter())
                     .map(f -> f.getFieldSort())
-                    .orElse("id");
+                    .map(s -> {
+                        String[] parts = s.split(",");
 
-            Sort sort = Sort.by(direction, field);
+                        String field = parts[0].trim();
+                        Sort.Direction direction = Sort.Direction.ASC;
+
+                        if (parts.length > 1) {
+                            try {
+                                direction = Sort.Direction.fromString(parts[1].trim());
+                            } catch (IllegalArgumentException e) {
+                                direction = Sort.Direction.ASC;
+                            }
+                        }
+
+                        return Sort.by(direction, field);
+                    })
+                    .orElse(Sort.by(Sort.Direction.ASC, "id"));
+
             Page<Manga> mangasPage = mangaRepository.findAll(mangaSpec, PageRequest.of(mangaFilter.getPageNum(), mangaFilter.getPageSize(), sort));
             mangaFilter.getPaging().setTotalRecords(mangasPage.getTotalElements());
             mangaFilter.getPaging().setTotalPages(mangasPage.getTotalPages());
@@ -213,7 +233,7 @@ public class MangaServiceImpl implements MangaService {
         }
 
         List<MangaDto> respones = mangas.stream()
-                .sorted(Comparator.comparing(Manga::getTitle))
+//                .sorted(Comparator.comparing(Manga::getTitle))
                 .map(m -> {
                     MangaDto mangaDto = new MangaDto();
                     BeanUtils.copyProperties(m, mangaDto);
@@ -297,7 +317,9 @@ public class MangaServiceImpl implements MangaService {
                 .sorted(Comparator.comparing(ChapterDto::getChapterNumber)).toList();
         mangaDto.setChapters(chapterDtos);
         mangaDto.setGenres(manga.getGenres().stream().map(MangaGenre::getCode).toList());
-        mangaDto.setMangaCategory(manga.getCategory().getCode());
+        if (Objects.nonNull(manga.getCategory())) {
+            mangaDto.setMangaCategory(manga.getCategory().getCode());
+        }
         return mangaDto;
     }
 

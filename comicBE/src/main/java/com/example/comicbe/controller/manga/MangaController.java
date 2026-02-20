@@ -53,9 +53,10 @@ public class MangaController {
             @RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "category", required = false) String category,
-            @RequestParam(value = "directionType", required = false) String directionType,
+//            @RequestParam(value = "directionType", required = false) String directionType,
             @RequestParam(value = "fieldSort", required = false) String fieldSort,
-            @RequestParam(value = "genre", required = false) List<String> genre,
+            @RequestParam(value = "genre_in", required = false) List<String> genre,
+            @RequestParam(value = "genre_not", required = false) List<String> genreNot,
             @RequestParam(value = "status", required = false) List<String> status,
             @RequestParam(value = "pageNum", required = false) @Min(value = 1, message = "Page number must be larger than 0") final Integer pageNum,
             @RequestParam(value = "pageSize", required = false) @Min(value = 1, message = "Page size must be larger than 0") final Integer pageSize
@@ -65,8 +66,9 @@ public class MangaController {
                 .category(category)
                 .title(title)
                 .genre(genre)
+                .genreNotIn(genreNot)
                 .status(status)
-                .direction(directionType)
+//                .direction(directionType)
                 .fieldSort(fieldSort)
                 .build();
 

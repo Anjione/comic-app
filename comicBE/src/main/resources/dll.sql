@@ -201,7 +201,10 @@ CREATE INDEX idx_user_roles_role ON user_roles(role_id);
 CREATE INDEX idx_roles_created_date ON roles(created_date);
 CREATE INDEX idx_roles_modified_date ON roles(modified_date);
 
-
+CREATE INDEX idx_genre_code ON genre(code);
+CREATE INDEX idx_mg_genre_id_manga_id ON manga_genre (genre_id, manga_id);
+CREATE INDEX idx_mg_manga_id_genre_id ON manga_genre (manga_id, genre_id);
+CREATE INDEX idx_manga_total_view ON manga(total_view);
 
 DROP SEQUENCE IF EXISTS seq_manga_category;
 CREATE SEQUENCE seq_manga_category
