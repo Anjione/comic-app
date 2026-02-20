@@ -58,7 +58,7 @@ public class MangaSpecs {
 //                Join<Manga, MangaGenre> genreJoin = root.join(Manga_.genres);
 
                 predicates.add(
-                        genreJoin.get(MangaGenre_.code).in(mangaFilter.getGenre())
+                        genreJoin.get(MangaGenre_.id).in(mangaFilter.getGenre())
                 );
             }
 
@@ -72,7 +72,7 @@ public class MangaSpecs {
                         criteriaBuilder.sum(
                                 criteriaBuilder.<Long>selectCase()
                                         .when(
-                                                genreJoin.get(MangaGenre_.code)
+                                                genreJoin.get(MangaGenre_.id)
                                                         .in(mangaFilter.getGenreNotIn()),
                                                 1L
                                         )

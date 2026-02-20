@@ -55,8 +55,8 @@ public class MangaController {
             @RequestParam(value = "category", required = false) String category,
 //            @RequestParam(value = "directionType", required = false) String directionType,
             @RequestParam(value = "fieldSort", required = false) String fieldSort,
-            @RequestParam(value = "genre_in", required = false) List<String> genre,
-            @RequestParam(value = "genre_not", required = false) List<String> genreNot,
+            @RequestParam(value = "genre_in", required = false) List<Long> genre,
+            @RequestParam(value = "genre_not", required = false) List<Long> genreNot,
             @RequestParam(value = "status", required = false) List<String> status,
             @RequestParam(value = "pageNum", required = false) @Min(value = 1, message = "Page number must be larger than 0") final Integer pageNum,
             @RequestParam(value = "pageSize", required = false) @Min(value = 1, message = "Page size must be larger than 0") final Integer pageSize
