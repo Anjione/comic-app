@@ -52,31 +52,53 @@ public class MangaSpecs {
 //                    criteriaBuilder.equal(genreJoin.get(MangaGenre_.code), mangaFilter.getGenre())
 //            );
 
+            Join<Manga, MangaGenre> genreJoin =
+                    root.join(Manga_.genres, JoinType.LEFT);
             if (!CollectionUtils.isEmpty(mangaFilter.getGenre())) {
-                Join<Manga, MangaGenre> genreJoin = root.join(Manga_.genres);
+//                Join<Manga, MangaGenre> genreJoin = root.join(Manga_.genres);
 
                 predicates.add(
                         genreJoin.get(MangaGenre_.code).in(mangaFilter.getGenre())
                 );
             }
 
+
+
+            query.groupBy(root.get(Manga_.id));
+
             if (!CollectionUtils.isEmpty(mangaFilter.getGenreNotIn())) {
 
-                Subquery<Long> subquery = query.subquery(Long.class);
-                Root<Manga> subRoot = subquery.from(Manga.class);
-                Join<Manga, MangaGenre> subJoin = subRoot.join(Manga_.genres);
-
-                subquery.select(subRoot.get(Manga_.id))
-                        .where(
-                                criteriaBuilder.and(
-                                        criteriaBuilder.equal(subRoot.get(Manga_.id), root.get(Manga_.id)),
-                                        subJoin.get(MangaGenre_.code)
-                                                .in(mangaFilter.getGenreNotIn())
-                                )
+                Expression<Long> forbiddenCount =
+                        criteriaBuilder.sum(
+                                criteriaBuilder.<Long>selectCase()
+                                        .when(
+                                                genreJoin.get(MangaGenre_.code)
+                                                        .in(mangaFilter.getGenreNotIn()),
+                                                1L
+                                        )
+                                        .otherwise(0L)
                         );
 
-                predicates.add(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
+                query.having(criteriaBuilder.equal(forbiddenCount, 0L));
             }
+
+//            if (!CollectionUtils.isEmpty(mangaFilter.getGenreNotIn())) {
+//
+//                Subquery<Long> subquery = query.subquery(Long.class);
+//                Root<Manga> subRoot = subquery.from(Manga.class);
+//                Join<Manga, MangaGenre> subJoin = subRoot.join(Manga_.genres);
+//
+//                subquery.select(subRoot.get(Manga_.id))
+//                        .where(
+//                                criteriaBuilder.and(
+//                                        criteriaBuilder.equal(subRoot.get(Manga_.id), root.get(Manga_.id)),
+//                                        subJoin.get(MangaGenre_.code)
+//                                                .in(mangaFilter.getGenreNotIn())
+//                                )
+//                        );
+//
+//                predicates.add(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
+//            }
 
 
             return concatenatePredicate(predicates, criteriaBuilder);
