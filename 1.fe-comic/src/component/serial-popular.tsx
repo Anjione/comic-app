@@ -10,24 +10,6 @@ import Link from "next/link";
 import { JSX, useState } from "react";
 import StarRating from "./star-rating";
 
-// const sampleWeekly: SeriesItem[] = [
-//     { id: 1, rank: 1, title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-//     { id: 2, rank: 2, title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1590796583326-afd3bb20d22d?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Action", "Fantasy"], score: 7 },
-//     { id: 3, rank: 3, title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action", "Adventure", "Fantasy"], score: 7 },
-// ];
-
-// const sampleMonthly: SeriesItem[] = [
-//     { id: 4, rank: 1, title: "Monthly A", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Comedy"], score: 6 },
-//     { id: 5, rank: 2, title: "Monthly B", href: "#", img: "https://images.unsplash.com/photo-1611457194403-d3aca4cf9d11?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGFuaW1lfGVufDB8fDB8fHww", genres: ["Drama"], score: 8 },
-// ];
-
-// const sampleAlltime: SeriesItem[] = [
-//     { id: 6, rank: 1, title: "Alltime A", href: "#", img: "https://images.unsplash.com/photo-1668293750324-bd77c1f08ca9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YW5pbWV8ZW58MHx8MHx8fDA%3D", genres: ["Action"], score: 9 },
-//     { id: 7, rank: 2, title: "Alltime B", href: "#", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=400&fit=crop", genres: ["Fantasy"], score: 8 },
-// ];
-
-const categories = ["Action", "Adventure", "Fantasy"];
-
 type TabId = "weekly" | "monthly" | "alltime";
 
 const TABS: { id: TabId; label: string }[] = [
@@ -137,7 +119,7 @@ export default function SerialPopular(): JSX.Element {
 
                                     <div className="text-xs mt-1">
                                         <span className={`text-[#999] font-medium ${fira.className}`}>Genres</span>:{" "}
-                                        {categories.map((g, idx) => (
+                                        {it.genres.map((g, idx) => (
                                             <span key={g}>
                                                 <Link
                                                     href={`/genre/${g.toLowerCase()}`}
@@ -145,7 +127,7 @@ export default function SerialPopular(): JSX.Element {
                                                 >
                                                     {g}
                                                 </Link>
-                                                {idx < categories.length - 1 && ", "}
+                                                {idx < it.genres.length - 1 && ", "}
                                             </span>
                                         ))}
                                     </div>

@@ -1,4 +1,4 @@
-interface MangaRecommendation {
+export interface MangaRecommendation {
     id: number;
     title: string;
     mangaAvatarUrl: string;
@@ -9,12 +9,12 @@ interface MangaRecommendation {
     modifiedDate: string;
 }
 
-interface GenreRecommendation {
+export interface GenreRecommendation {
     genreId: number;
     genreCode: string;
     mangas: MangaRecommendation[];
 }
 
-interface RecommendationResponse {
+export interface RecommendationResponse {
     data: GenreRecommendation[];
 }

@@ -42,10 +42,10 @@ export default function LatestUpdate({ page = 1,
   basePath = "/page" }: LatestUpdateProps) {
 
   const { data: latestMangaResponse } = useQuery<LatestMangaResponse>({
-    queryKey: ['lastest-update'],
+    queryKey: ['lastest-update', page],
     // queryFn vẫn phải khai báo để React Query có thể fetch lại khi dữ liệu cũ (stale)
     queryFn: async () => {
-      const response = await axios.get('/api-remote/manga/lastUpdate?pageNum=1&pageSize=20');
+      const response = await axios.get(`/api-remote/manga/lastUpdate?pageNum=${page}&pageSize=${pageSize}`);
       return response.data;
     },
     initialData: {
@@ -64,14 +64,10 @@ export default function LatestUpdate({ page = 1,
     staleTime: 1000 * 60 * 5,
   });
 
-  const mangas = latestMangaResponse.data;
+  const pageItems = latestMangaResponse.data;
   const paging = latestMangaResponse.paging;
   // Logic phân trang... (Giữ nguyên)
   const total = paging.totalRecords;
-  const totalPages = paging.totalPages;
-  const current = Math.min(Math.max(1, page), totalPages);
-  const start = (current - 1) * pageSize;
-  const pageItems = mangas.slice(start, start + pageSize);
 
   return (
     <section className="bixbox bg-[#222222] shadow">
@@ -79,7 +75,7 @@ export default function LatestUpdate({ page = 1,
         <h2 className="font-semibold">
           Latest Update
         </h2>
-        <Link href="/manga?order=update" className="px-2 py-1 text-[8px] font-medium transition-colors rounded-sm bg-black text-white uppercase">
+        <Link href="/manga?order=modifiedDate" className="px-2 py-1 text-[8px] font-medium transition-colors rounded-sm bg-black text-white uppercase">
           View All
         </Link>
       </div>
@@ -88,7 +84,7 @@ export default function LatestUpdate({ page = 1,
         {pageItems.map((c: MangaData) => {
 
           // 1. Lấy đường dẫn icon
-          const iconSrc = getTypeIcon(c.type);
+          const iconSrc = getTypeIcon(c.mangaCategory);
 
           return (
             <article key={c.id} className="utao styletwo flex gap-3 px-2 py-4 transition border-b border-[#333]">
@@ -110,7 +106,7 @@ export default function LatestUpdate({ page = 1,
                   <div className="absolute top-0 right-0 z-10 p-[5px] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
                     <Image
                       src={iconSrc}
-                      alt={c.type || "Manga"}
+                      alt={c.mangaCategory || "Manga"}
                       width={25} // Điều chỉnh kích thước icon tại đây
                       height={17} // Điều chỉnh kích thước icon tại đây
                       className="opacity-90"
@@ -120,7 +116,7 @@ export default function LatestUpdate({ page = 1,
                   // Nếu không có icon ảnh, hiển thị text cũ (hoặc không hiển thị gì)
                   // Tôi giữ lại span text cũ nếu không tìm thấy icon để đảm bảo tính an toàn
                   <span className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-0.5 rounded">
-                    {c.type ?? ""}
+                    {c.mangaCategory ?? ""}
                   </span>
                 )}
 
@@ -140,7 +136,7 @@ export default function LatestUpdate({ page = 1,
                   <ul className="mt-2 space-y-1">
                     {c.chapters.slice(0, 3).map((ch, idx) => {
                       // Lấy màu dựa trên type truyện
-                      const bulletColor = getTypeColor(c.type);
+                      const bulletColor = getTypeColor(c.mangaCategory);
 
                       return (
                         <li key={idx} className="flex justify-between items-center gap-2 text-sm">

@@ -6,7 +6,7 @@ import { SAMPLE_GENRES, STATUS_LIST, TYPE_LIST, SORT_LIST } from "@/type/comic-i
 
 type GenreState = Record<number, 1 | 2>;
 
-export default function QuickFilter({ order }: { order?: string }) {
+export default function QuickFilter({ order, page }: { order?: string, page?: number }) {
     const router = useRouter();
 
     // State quản lý dropdown nào đang mở (genre, status, type, order)
@@ -75,6 +75,7 @@ export default function QuickFilter({ order }: { order?: string }) {
         if (status) params.set("status", status);
         if (type) params.set("type", type);
         if (sortBy) params.set("order", sortBy);
+        params.set("page", page?.toString() || "1");
 
         // Chuyển hướng
         router.push(`/manga?${params.toString()}`);

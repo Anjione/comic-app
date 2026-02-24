@@ -2,28 +2,13 @@
 "use client";
 
 import { fira } from "@/lib/fonts";
-import { SeriesItem } from "@/type/comic-info";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { JSX, useEffect, useMemo, useState } from "react";
 import StarRating from "./star-rating";
-
-
-// type SeriesItem = {
-//     id: number;
-//     rank: number;
-//     chapter: string;
-//     title: string;
-//     href: string;
-//     img: string;
-//     genres: string[];
-//     score: number; // 0-10
-// };
-
-type TabId = "comedy" | "horror" | "school-life" | "shotacon" | "web-comic";
-
+import { RecommendationResponse } from "@/type/recommend-data";
 
 function tabClass(isActive: boolean) {
     return (
@@ -31,8 +16,6 @@ function tabClass(isActive: boolean) {
         (isActive ? "bg-black text-white" : "text-gray-400 hover:text-gray-200")
     ).trim();
 }
-
-
 
 export default function Recommendation(): JSX.Element {
     const [activeGenreId, setActiveGenreId] = useState<number | null>(null);

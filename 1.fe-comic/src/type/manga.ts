@@ -13,7 +13,8 @@ export interface MangaData {
     rating: number;
     totalView: number;
     href: string;
-    type?: string;
+    // type?: string;
+    mangaCategory?: string;
     colored?: boolean;
     chapters: Chapter[];
     status?: string;
@@ -36,6 +37,13 @@ export interface Paging {
 }
 
 export interface LatestMangaResponse {
+    timestamp: string;
+    status: number;
+    data: MangaData[];
+    paging: Paging;
+}
+
+export interface MangaListResponse {
     timestamp: string;
     status: number;
     data: MangaData[];

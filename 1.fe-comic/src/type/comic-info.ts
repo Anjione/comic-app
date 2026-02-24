@@ -140,6 +140,12 @@ export type TextModeComic = {
     }[];
 }
 
+export type TextModeComicResponse = {
+    data: TextModeComic[];
+    timestamp: string;
+    status: number;
+}
+
 export const SERIES_DATA: TextModeComic[] = [
     {
         letter: 'R',

@@ -16,7 +16,7 @@ export default async function MangaPage({
     // Với Next.js 15, access searchParams trực tiếp có thể cần await nếu nó là promise (trong tương lai), 
     // nhưng hiện tại ta cứ viết đơn giản. Nếu lỗi thì sửa sau.
     // const order = searchParams?.order; 
-    const { order } = await searchParams;
+    const { order, page } = await searchParams;
 
     return (
         <div className="w-full">
@@ -24,7 +24,7 @@ export default async function MangaPage({
                 <div className="listupd grid grid-cols-1 lg:grid-cols-7 xl:grid-cols-17 gap-4">
                     {/* LatestUpdate */}
                     <div className="flex flex-col col-span-1 lg:col-span-5 xl:col-span-12 gap-4">
-                        <MangaList order={order} />
+                        <MangaList fieldSort={order} page={Number(page)} />
                     </div>
 
                     {/* SerialPopular */}
