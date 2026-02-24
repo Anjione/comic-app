@@ -1,11 +1,27 @@
+"use client"
 import AlphabeticalNav from '@/component/alphabet-nav';
 import QuickFilter from '@/component/quick-filter';
-import { SERIES_DATA, SeriesItem } from '@/type/comic-info';
+import { TextModeComicResponse } from '@/type/comic-info';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
 
 
 
 export default function TextMangaList() {
+
+    const { data: response } = useQuery<TextModeComicResponse>({
+        queryKey: ['manga-text-list'],
+        queryFn: async () => {
+            const res = await axios.get(`/api-remote/manga/groupAlphabet`);
+            return res.data;
+        },
+        // Giữ staleTime để tránh refetch liên tục khi chuyển qua lại giữa các trang
+        staleTime: 1000 * 60 * 5,
+    });
+
+    const pageItems = response?.data || [];
+
     return (
         // Thay thế div.bixbox
         <div className="bg-[#222222]">
@@ -38,7 +54,7 @@ export default function TextMangaList() {
                 {/* div.lxx có vẻ là một dải phân cách/placeholder trống rỗng, tôi sẽ bỏ qua hoặc thay bằng một dải phân cách nhỏ */}
                 {/* <div className="h-1 bg-gray-700 w-full mb-4"></div> */}
 
-                {SERIES_DATA.map((group) => (
+                {pageItems.map((group) => (
                     // div.blix: Nhóm các mục theo chữ cái
                     <div
                         key={group.letter}
@@ -56,12 +72,13 @@ export default function TextMangaList() {
                         </span>
 
                         {/* ul: Danh sách các truyện tranh trong nhóm */}
-                        <ul className="list-none space-y-2 pl-0">
+                        <ul className="list-none space-y-2 pl-0 grid min-[570px]:grid-cols-2">
                             {group.items.map((item) => (
                                 <li key={item.id} className="text-gray-300 hover:text-white transition-colors">
+                                    <span className={`mr-2 shrink-0 text-lg leading-none text-black`}>•</span>
                                     <Link
                                         // class="series tip" rel="..."
-                                        href={item.url}
+                                        href={`/manga/list-mode/`}
                                         rel={item.id.toString()}
                                         className="
                                         text-xs md:text-sm hover:text-white 

@@ -4,6 +4,7 @@ import React from 'react';
 import { useWindowSize } from '@/hooks/useWindowSize';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { GenreItem, GenreResponse } from '@/type/genre';
 
 // Hàm chunkArray linh hoạt
 const chunkArray = (arr: GenreItem[], size: number) => {

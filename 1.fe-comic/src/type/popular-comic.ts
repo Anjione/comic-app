@@ -11,7 +11,8 @@ export interface PopularManga {
     lastChapter: string;
     modifiedBy: string | null;
     createdBy: string | null;
-    mangaCategory: string[] // Có thể thay any bằng interface Category nếu có
+    mangaCategory: string // Có thể thay any bằng interface Category nếu có
+    genres: string[] // Có thể thay any bằng interface Category nếu có
     chapters: string | null;
     type?: string;
     colored?: boolean;

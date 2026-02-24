@@ -1,43 +1,99 @@
-import Link from "next/link";
+'use client';
 
+import { generatePagination } from '@/lib/common-util';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-export default function PaginationNumber({ total, pageSize, page, basePath, param }: { total: number, pageSize: number, page: number, basePath: string, param?: string }) {
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const current = Math.min(Math.max(1, page), totalPages);
-    const isFirstPage = current <= 1;
-    const isLastPage = current >= totalPages;
+interface Props {
+    totalPages: number;
+}
 
-    const previousPage = current - 1;
-    const nextPage = current + 1;
-    console.log("param", param);
+export default function PaginationNumber({ totalPages }: Props) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
-    // Class Styling... (Giữ nguyên)
-    const buttonClasses = "flex items-center px-8 py-1 text-sm font-medium bg-black rounded-xs transition-colors duration-500 whitespace-nowrap";
-    const textColorClasses = "hover:text-white";
+    // Lấy trang hiện tại từ URL, mặc định là 1
+    // Bóc tách trang hiện tại từ pathname
+    const match = pathname.match(/\/page\/(\d+)/);
+    const currentPage = match ? Number(match[1]) : 1;
+
+    const pages = generatePagination(currentPage, totalPages);
+
+    // const createPageURL = (pageNumber: number | string) => {
+    //     // Lấy pathname hiện tại (ví dụ: /az-lists/page/1/)
+    //     let currentPath = pathname;
+    //     const params = new URLSearchParams(searchParams.toString());
+
+    //     // 1. Xử lý Pathname: Thay thế hoặc thêm /page/x/
+    //     if (currentPath.includes('/page/')) {
+    //         // Nếu đã có /page/n/, dùng Regex để thay n bằng pageNumber mới
+    //         currentPath = currentPath.replace(/\/page\/\d+/, `/page/${pageNumber}`);
+    //     } else {
+    //         // Nếu chưa có, thêm /page/x/ vào sau az-lists (hoặc cuối pathname)
+    //         // Đảm bảo không bị thừa dấu gạch chéo
+    //         currentPath = currentPath.replace(/\/$/, '') + `/page/${pageNumber}/`;
+    //     }
+
+    //     // 2. Xử lý Search Params: Giữ lại các filter như ?show=A
+    //     const queryString = params.toString();
+
+    //     return queryString ? `${currentPath}?${queryString}` : currentPath;
+    // };
+
+    const handleNav = (page: number) => {
+        let newPath = pathname;
+        if (newPath.includes('/page/')) {
+            newPath = newPath.replace(/\/page\/\d+/, `/page/${page}`);
+        } else {
+            newPath = `${newPath.replace(/\/$/, '')}/page/${page}/`;
+        }
+
+        const queryString = searchParams.toString();
+        const finalUrl = queryString ? `${newPath}?${queryString}` : newPath;
+
+        router.push(finalUrl);
+    };
 
     return (
-        <div className="flex justify-center items-center w-full gap-1 py-6">
-            {!isFirstPage && (
-                <Link
-                    href={`${basePath}/${previousPage}`} // Dùng basePath
-                    className={`${buttonClasses} ${textColorClasses}`}
+        <div className="flex items-center justify-center gap-2 my-8">
+            {/* Nút Previous */}
+            {currentPage > 1 && (
+                <button
+                    onClick={() => handleNav(currentPage - 1)}
+                    className="px-3 py-2 font-medium rounded-xs bg-[#16151d] text-gray-300 hover:text-black transition-colors cursor-pointer"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
-                    Previous
-                </Link>
+                    « Previous
+                </button>
             )}
-            {!isLastPage && (
-                <Link
-                    href={`${basePath}/${nextPage}`} // Dùng basePath
-                    className={`${buttonClasses} ${textColorClasses} `}
+
+            {/* Danh sách các số trang */}
+            {pages.map((page, index) => {
+                // Kiểm tra xem có cần hiển thị dấu "..." không (Tùy chọn)
+                // Nếu bạn muốn giống hệt ảnh 100% thì bỏ qua check ellipsis
+                const isSelected = currentPage === page;
+
+                return (
+                    <button
+                        key={index}
+                        onClick={() => handleNav(page)}
+                        className={`min-w-[40px] h-[40px] text-sm font-medium rounded-xs transition-colors cursor-pointer ${isSelected
+                            ? 'bg-black text-white'
+                            : 'bg-[#16151d] text-gray-300 hover:text-black'
+                            }`}
+                    >
+                        {page}
+                    </button>
+                );
+            })}
+
+            {/* Nút Next */}
+            {currentPage < totalPages && (
+                <button
+                    onClick={() => handleNav(currentPage + 1)}
+                    className="px-3 py-2 font-medium rounded-xs bg-[#16151d] text-gray-300 hover:text-black transition-colors cursor-pointer"
                 >
-                    Next
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </Link>
+                    Next »
+                </button>
             )}
         </div>
     );

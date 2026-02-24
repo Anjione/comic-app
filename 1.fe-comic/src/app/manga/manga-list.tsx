@@ -1,4 +1,5 @@
 "use client";
+
 import QuickFilter from '@/component/quick-filter';
 import { getTypeIcon } from '@/lib/common-util';
 import { fira } from "@/lib/fonts";
@@ -6,144 +7,179 @@ import { MangaData } from '@/type/manga';
 import axios from 'axios';
 import Image from "next/image";
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'next/navigation';
 import Pagination from '../../component/pagination';
 import StarRating from '../../component/star-rating';
-import { Constants } from '../../constants';
 
+// 1. Định nghĩa Interface chuẩn cho Response
+interface MangaListResponse {
+    timestamp: string;
+    status: number;
+    data: MangaData[];
+    paging: {
+        pageNum: number;
+        pageSize: number;
+        totalRecords: number;
+        totalPages: number;
+        validPageNum: boolean;
+        validPageSize: boolean;
+    };
+}
 
-export default function MangaList({ order }: { order?: string | string[] }) {
-    // const NoSSRComponent = dynamic(() => import('./manga-list'), { ssr: false });
-    const [bookmarks, setMangas] = useState<MangaData[]>([]);
-    // const [loading, setLoading] = useState<boolean>(true);
-    useEffect(() => {
-        const fetchMangaList = async () => {
-            try {
-                const response = await axios.get('/api-remote/manga');
-                if (response['data']['status'] === 200) {
-                    setMangas(response['data']['data']); // Map mảng danh sách truyện vào state
-                }
-            } catch (error) {
-                console.error("Lỗi fetch danh sách truyện:", error);
-            } finally {
-                // setLoading(false);
-            }
-        };
+export default function MangaList({ fieldSort }: { fieldSort?: string | string[], page: number }) {
+    const searchParams = useSearchParams();
 
-        fetchMangaList();
-    }, []);
+    // 2. Lấy toàn bộ filter từ URL
+    const pageNum = Number(searchParams.get('page')) || 1;
+    const type = searchParams.get('type') || '';
+    const title = searchParams.get('title') || '';
+    const author = searchParams.get('author') || '';
+    const genre_in = searchParams.get('genre_in') || '';
+    const genre_not = searchParams.get('genre_not') || '';
+    const status = searchParams.get('status') || '';
+    // const order = searchParams.get('order') || '';
 
-    const total = bookmarks.length;
-    const totalPages = Math.max(1, Math.ceil(total / Constants.DEFAULT_PAGE_SIZE));
-    const current = Math.min(Math.max(1, Constants.DEFAULT_PAGE), totalPages);
-    const start = (current - 1) * Constants.DEFAULT_PAGE_SIZE;
-    const pageItems = bookmarks.slice(start, start + Constants.DEFAULT_PAGE_SIZE);
+    // 3. React Query với đầy đủ Dependencies
+    const { data: response, isLoading } = useQuery<MangaListResponse>({
+        queryKey: ['manga-list', pageNum, type, title, author, genre_in, genre_not, status, fieldSort],
+        queryFn: async () => {
+            // Tạo object chứa tất cả params dự kiến
+            const rawParams = {
+                pageNum,
+                pageSize: 20,
+                type,
+                title,
+                author,
+                genre_in,
+                genre_not,
+                status,
+                fieldSort
+            };
+
+            // Lọc bỏ các key có giá trị falsy (chuỗi rỗng, null, undefined)
+            // Lưu ý: Chúng ta giữ lại số 0 nếu pageNum có thể là 0
+            const cleanParams = Object.fromEntries(
+                Object.entries(rawParams).filter(([, value]) => value !== '' && value !== null && value !== undefined)
+            );
+
+            const res = await axios.get(`/api-remote/manga/retrieveWithParam`, {
+                params: cleanParams // Chỉ gửi những gì có giá trị
+            });
+            return res.data;
+        },
+        staleTime: 1000 * 60 * 5,
+    });
+
+    // 4. Trích xuất dữ liệu an toàn
+    const pageItems = response?.data || [];
+    const paging = response?.paging;
+
+    // Logic cho Pagination: Lấy trực tiếp từ API trả về
+    const totalRecords = paging?.totalRecords || 0;
+    // const totalPages = paging?.totalPages || 2;
+    const pageSize = paging?.pageSize || 20;
 
     return (
-        // Thay thế div.bixbox
         <div className="bg-[#222222]">
-
-            {/* Thay thế div.releases.blog */}
+            {/* Header */}
             <div className="release flex items-center justify-between">
                 <h2 className="font-semibold">
                     Manga Lists
                 </h2>
             </div>
-            <div
-                className="flex justify-center rounded transition-all duration-200"
-                role="tablist"
-                aria-label="Popular series range"
-            >
-                <QuickFilter order={Array.isArray(order) ? order[0] : order} />
+
+            {/* Filter Bar */}
+            <div className="flex flex-col py-2">
+                <div className="flex justify-center transition-all duration-200" role="tablist">
+                    <QuickFilter order={Array.isArray(fieldSort) ? fieldSort[0] : fieldSort} page={pageNum} />
+                </div>
+                <div className="flex justify-end pr-5" role="tablist">
+                    <Link href="/manga/list-mode/" className="px-2 py-1 text-[11px] font-medium transition-colors rounded-sm bg-[#333] text-gray-300 hover:text-white">
+                        TEXT MODE
+                    </Link>
+                </div>
             </div>
-            <div
-                className="flex justify-end rounded transition-all duration-200 pr-[15px]"
-                role="tablist"
-                aria-label="Popular series range"
-            >
-                <Link href="/manga/list-mode/" className="px-2 py-1 text-[13px] font-medium transition-colors rounded-sm bg-[#333] text-white">
-                    Text mode
-                </Link>
-            </div>
-            <div className="grid grid-cols-3 min-[670px]:grid-cols-5 gap-4 p-5">
-                {pageItems.map((it) => {
-                    const iconSrc = getTypeIcon(it.type || "Manga");
-                    return (
-                        <article key={it.id} className={`w-full bg-transparent rounded-md flex-col items-start gap-0 transition-colors duration-500 hover:text-[#000000] cursor-pointer`}>
-                            {/* Cover */}
-                            <Link href="#" className="w-full block">
-                                <article className="w-full">
-                                    <div className="relative w-full aspect-3/4">
-                                        <Image
-                                            src={it.mangaAvatarUrl}
-                                            fill
-                                            alt={it.title}
-                                            className="object-cover"
-                                        />
-                                        {/* 💥 THAY THẾ/THÊM ICON 💥 */}
-                                        {iconSrc ? (
-                                            // Hiển thị Icon ảnh ở góc trên bên trái
-                                            <div className="absolute top-0 right-0 z-10 p-[5px] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
-                                                <Image
-                                                    src={iconSrc}
-                                                    alt={it.type || "Manga"}
-                                                    width={25} // Điều chỉnh kích thước icon tại đây
-                                                    height={17} // Điều chỉnh kích thước icon tại đây
-                                                    className="opacity-90"
-                                                />
-                                            </div>
-                                        ) : (
-                                            // Nếu không có icon ảnh, hiển thị text cũ (hoặc không hiển thị gì)
-                                            // Tôi giữ lại span text cũ nếu không tìm thấy icon để đảm bảo tính an toàn
-                                            <span className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-0.5 rounded">
-                                                {it.type ?? "Manga"}
+
+            {/* Main Content: Grid List */}
+            {isLoading && pageItems.length === 0 ? (
+                <div className="h-64 flex items-center justify-center text-gray-500">
+                    <span className="animate-pulse">Loading manga list...</span>
+                </div>
+            ) : !isLoading && pageItems.length === 0 ? (
+                <div className="h-auto pb-10 flex items-center justify-center text-gray-300">
+                    <span>-- No Post Found --</span>
+                </div>
+            ) : (
+                <div className="grid grid-cols-3 min-[670px]:grid-cols-5 gap-4 p-5">
+                    {pageItems.map((it) => {
+                        const iconSrc = getTypeIcon(it.mangaCategory || "Manga");
+                        return (
+                            <article key={it.id} className="w-full group cursor-pointer">
+                                {/* Cover Image Container */}
+                                <Link href={`/manga/${it.id}`} className="relative w-full aspect-3/4 block overflow-hidden rounded-sm">
+                                    <Image
+                                        src={it.mangaAvatarUrl}
+                                        fill
+                                        alt={it.title}
+                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                        sizes="(max-width: 670px) 33vw, 20vw"
+                                    />
+
+                                    {/* Type Icon */}
+                                    {iconSrc && (
+                                        <div className="absolute top-0 right-0 z-10 p-1 bg-transparent rounded-bl-sm">
+                                            <Image src={iconSrc} alt={it.mangaCategory || ""} width={22} height={15} />
+                                        </div>
+                                    )}
+
+                                    {/* Colored Tag */}
+                                    {it.colored && (
+                                        <div className="absolute bottom-1 left-1 z-10">
+                                            <span className="bg-[#ebcf04] text-black font-bold text-[9px] py-0.5 px-1 rounded-sm uppercase">
+                                                Color
+                                            </span>
+                                        </div>
+                                    )}
+                                </Link>
+
+                                {/* Info */}
+                                <div className="mt-2">
+                                    <Link href={`/manga/${it.id}`} className="block">
+                                        <h3 className="text-sm font-semibold text-gray-100 leading-tight line-clamp-2 group-hover:text-sky-400 transition-colors">
+                                            {it.title}
+                                        </h3>
+                                    </Link>
+
+                                    <div className="flex flex-col gap-0.5 mt-1">
+                                        {it.lastChapter && (
+                                            <span className={`text-[12px] text-gray-400 ${fira.className}`}>
+                                                {it.lastChapter}
                                             </span>
                                         )}
-                                        {it.colored && (
-                                            <div className="absolute bottom-0 left-0 z-10 p-1">
-                                                <span className="
-                                                                                                  absolute z-10 
-                                                                                                  bottom-[5px] left-[5px] 
-                                                                                                  bg-[#ebcf04] text-[rgba(0,0,0,0.7)] 
-                                                                                                  font-bold text-[10px] 
-                                                                                                  py-[2px] px-[5px] 
-                                                                                                  rounded-[3px] uppercase
-                                                                                                  flex items-center gap-1">
-                                                    <i className="fas fa-palette" aria-hidden="true"></i>
-                                                    <span>Color</span>
-                                                </span>
-                                            </div>
-                                        )}
+                                        <div className="flex items-center gap-1.5">
+                                            <StarRating score={it.rating} />
+                                            <span className="text-[11px] text-gray-500">{it.rating}</span>
+                                        </div>
                                     </div>
-                                </article>
-
-                            </Link>
-
-                            {/* Title */}
-                            <Link href="#" className="w-full block">
-                                <div className="text-sm my-[8px] mb-[3px] font-semibold leading-[20px] text-left overflow-hidden text-ellipsis line-clamp-2">{it.title}</div>
-                            </Link>
-
-                            {/* Chapter count */}
-                            {it.lastChapter && (
-                                <div className={`text-sm text-[#999] ${fira.className}`}>{it.lastChapter}</div>
-                            )}
-
-                            {/* Stars */}
-                            <div className="flex items-center gap-1 mt-1">
-                                <div className="flex items-center">
-                                    <StarRating score={it.rating} />
                                 </div>
-                                <div className="text-xs text-[#999]">
-                                    {it.rating}
-                                </div>
-                            </div>
-                        </article>
-                    );
-                })}
-            </div>
-            {/* Pagination */}
-            <Pagination total={bookmarks.length} page={Constants.DEFAULT_PAGE} pageSize={Constants.DEFAULT_PAGE_SIZE} basePath={"/bookmark"} />
+                            </article>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/* Pagination Section */}
+            {totalRecords > 0 && (
+                <div className="py-8 border-t border-[#312f40] mx-5">
+                    <Pagination
+                        total={totalRecords}
+                        page={pageNum}
+                        pageSize={pageSize}
+                        basePath={"/manga"}
+                    />
+                </div>
+            )}
         </div>
     );
 }
