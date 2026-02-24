@@ -6,7 +6,6 @@ import PopularToday from "@/component/popular-today";
 import Recommendation from "@/component/recommendation";
 import SearchBox from "@/component/search-box";
 import SerialPopular from "@/component/serial-popular";
-import { PopularMangaGroups } from "@/type/popular-comic";
 import { popularMangasSample, sampleItems } from "@/type/sample-data";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -18,7 +17,12 @@ import axios from "axios";
 //     return response.data.data;
 // };
 
-export default function Home() {
+export default function Home({
+    searchParams,
+}: {
+    searchParams: { page: number };
+}) {
+    const page = Number(searchParams.page) || 1;
     // 2. Sử dụng useQuery
     const { data: popularMangas } = useQuery({
         queryKey: ['popular-manga'],
@@ -40,7 +44,7 @@ export default function Home() {
 
                 <div className="listupd grid grid-cols-1 lg:grid-cols-7 min-[880px]:grid-cols-17 gap-4">
                     <div className="flex flex-col col-span-1 lg:col-span-5 min-[880px]:col-span-12 gap-4">
-                        <LatestUpdate items={sampleItems} nextPageUrl="/manga?order=update&page=2" />
+                        <LatestUpdate items={sampleItems} nextPageUrl={`/page/${page + 1}`} page={page} pageSize={20} />
                         <Recommendation />
                         <Blog />
                     </div>

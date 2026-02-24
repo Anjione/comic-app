@@ -2,7 +2,13 @@ import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query
 import axios from 'axios';
 import Home from './home'; // Chúng ta sẽ đổi tên file Home cũ thành cái này
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageString } = await searchParams;
+  const page = Number(pageString) || 1;
   const queryClient = new QueryClient();
 
   // Chạy song song tất cả các API
@@ -15,9 +21,9 @@ export default async function Page() {
       },
     }),
     queryClient.prefetchQuery({
-      queryKey: ['lastest-update'],
+      queryKey: ['lastest-update', page],
       queryFn: async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/manga/lastUpdate?pageNum=1&pageSize=20`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/manga/lastUpdate?pageNum=${page}&pageSize=20`);
         return response.data;
       },
     }),
@@ -40,7 +46,7 @@ export default async function Page() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Home />
+      <Home searchParams={{ page }} />
     </HydrationBoundary>
   );
 }
