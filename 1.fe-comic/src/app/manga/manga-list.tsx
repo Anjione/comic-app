@@ -3,12 +3,11 @@
 import QuickFilter from '@/component/quick-filter';
 import { getTypeIcon } from '@/lib/common-util';
 import { fira } from "@/lib/fonts";
-import { MangaData } from '@/type/manga';
+import { MangaData, MangaListParams } from '@/type/manga';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from "next/image";
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'next/navigation';
 import Pagination from '../../component/pagination';
 import StarRating from '../../component/star-rating';
 
@@ -27,28 +26,19 @@ interface MangaListResponse {
     };
 }
 
-export default function MangaList({ fieldSort }: { fieldSort?: string | string[], page: number }) {
-    const searchParams = useSearchParams();
-
-    // 2. Lấy toàn bộ filter từ URL
-    const pageNum = Number(searchParams.get('page')) || 1;
-    const type = searchParams.get('type') || '';
-    const title = searchParams.get('title') || '';
-    const author = searchParams.get('author') || '';
-    const genre_in = searchParams.get('genre_in') || '';
-    const genre_not = searchParams.get('genre_not') || '';
-    const status = searchParams.get('status') || '';
-    // const order = searchParams.get('order') || '';
+export default function MangaList({ initialParams }: { initialParams: MangaListParams }) {
+    const pageNum = initialParams.page || 1;
+    const { category, title, author, genre_in, genre_not, status, fieldSort } = initialParams;
 
     // 3. React Query với đầy đủ Dependencies
     const { data: response, isLoading } = useQuery<MangaListResponse>({
-        queryKey: ['manga-list', pageNum, type, title, author, genre_in, genre_not, status, fieldSort],
+        queryKey: ['manga-list', pageNum, category, title, author, genre_in, genre_not, status, fieldSort],
         queryFn: async () => {
             // Tạo object chứa tất cả params dự kiến
             const rawParams = {
                 pageNum,
                 pageSize: 20,
-                type,
+                category,
                 title,
                 author,
                 genre_in,
