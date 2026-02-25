@@ -1,7 +1,7 @@
 'use client';
 
 import { generatePagination } from '@/lib/common-util';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface Props {
     totalPages: number;
@@ -10,37 +10,15 @@ interface Props {
 export default function PaginationNumber({ totalPages }: Props) {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
 
-    // Lấy trang hiện tại từ URL, mặc định là 1
-    // Bóc tách trang hiện tại từ pathname
+    // Lấy trang hiện tại từ pathname bằng Regex
     const match = pathname.match(/\/page\/(\d+)/);
     const currentPage = match ? Number(match[1]) : 1;
 
     const pages = generatePagination(currentPage, totalPages);
 
-    // const createPageURL = (pageNumber: number | string) => {
-    //     // Lấy pathname hiện tại (ví dụ: /az-lists/page/1/)
-    //     let currentPath = pathname;
-    //     const params = new URLSearchParams(searchParams.toString());
-
-    //     // 1. Xử lý Pathname: Thay thế hoặc thêm /page/x/
-    //     if (currentPath.includes('/page/')) {
-    //         // Nếu đã có /page/n/, dùng Regex để thay n bằng pageNumber mới
-    //         currentPath = currentPath.replace(/\/page\/\d+/, `/page/${pageNumber}`);
-    //     } else {
-    //         // Nếu chưa có, thêm /page/x/ vào sau az-lists (hoặc cuối pathname)
-    //         // Đảm bảo không bị thừa dấu gạch chéo
-    //         currentPath = currentPath.replace(/\/$/, '') + `/page/${pageNumber}/`;
-    //     }
-
-    //     // 2. Xử lý Search Params: Giữ lại các filter như ?show=A
-    //     const queryString = params.toString();
-
-    //     return queryString ? `${currentPath}?${queryString}` : currentPath;
-    // };
-
     const handleNav = (page: number) => {
+        // 1. Xử lý Pathname mới
         let newPath = pathname;
         if (newPath.includes('/page/')) {
             newPath = newPath.replace(/\/page\/\d+/, `/page/${page}`);
@@ -48,8 +26,12 @@ export default function PaginationNumber({ totalPages }: Props) {
             newPath = `${newPath.replace(/\/$/, '')}/page/${page}/`;
         }
 
-        const queryString = searchParams.toString();
-        const finalUrl = queryString ? `${newPath}?${queryString}` : newPath;
+        // 2. Lấy Query String từ window.location
+        // window.location.search sẽ trả về chuỗi bao gồm cả dấu "?" (ví dụ: "?show=A")
+        const queryString = typeof window !== 'undefined' ? window.location.search : '';
+
+        // 3. Kết hợp lại
+        const finalUrl = `${newPath}${queryString}`;
 
         router.push(finalUrl);
     };
@@ -68,10 +50,7 @@ export default function PaginationNumber({ totalPages }: Props) {
 
             {/* Danh sách các số trang */}
             {pages.map((page, index) => {
-                // Kiểm tra xem có cần hiển thị dấu "..." không (Tùy chọn)
-                // Nếu bạn muốn giống hệt ảnh 100% thì bỏ qua check ellipsis
                 const isSelected = currentPage === page;
-
                 return (
                     <button
                         key={index}
