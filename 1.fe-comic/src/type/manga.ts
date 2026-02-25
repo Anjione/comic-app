@@ -49,3 +49,14 @@ export interface MangaListResponse {
     data: MangaData[];
     paging: Paging;
 }
+
+export interface MangaListParams {
+    page: number;
+    category: string;
+    title: string;
+    author: string;
+    genre_in: string;
+    genre_not: string;
+    status: string;
+    fieldSort: string;
+}

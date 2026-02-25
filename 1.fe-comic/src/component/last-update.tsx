@@ -75,7 +75,7 @@ export default function LatestUpdate({ page = 1,
         <h2 className="font-semibold">
           Latest Update
         </h2>
-        <Link href="/manga?order=modifiedDate" className="px-2 py-1 text-[8px] font-medium transition-colors rounded-sm bg-black text-white uppercase">
+        <Link href="/manga?order=update" className="px-2 py-1 text-[8px] font-medium transition-colors rounded-sm bg-black text-white uppercase">
           View All
         </Link>
       </div>

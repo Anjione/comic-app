@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 
 export default function Pagination({
     total,
@@ -14,30 +13,30 @@ export default function Pagination({
     page: number,
     basePath: string
 }) {
-    const searchParams = useSearchParams();
+    // Loại bỏ hook useSearchParams()
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     const current = Math.min(Math.max(1, page), totalPages);
 
     const isFirstPage = current <= 1;
     const isLastPage = current >= totalPages;
 
-    // Hàm tạo link dựa trên basePath
     const createPageLink = (pageNumber: number) => {
-        const params = new URLSearchParams(searchParams.toString());
+        // Lấy query string hiện tại trực tiếp từ trình duyệt
+        const currentSearch = typeof window !== "undefined" ? window.location.search : "";
+        const params = new URLSearchParams(currentSearch);
 
-        // Sử dụng Switch Case dựa trên basePath như bạn yêu cầu
         switch (basePath) {
             case "/manga":
-                // Đối với trang manga, ta giữ lại các filter cũ và ghi đè page
+                // Giữ lại các filter cũ (ví dụ ?type=manga&status=ongoing) và ghi đè page
                 params.set("page", pageNumber.toString());
                 return `${basePath}/?${params.toString()}`;
 
             case "/page":
-                // Đối với trang chủ (latest update) dùng cấu trúc /page/[number]
+                // Cấu trúc /page/[number] cho trang chủ
                 return `/page/${pageNumber}`;
 
             default:
-                // Mặc định hoặc các trường hợp khác
+                // Mặc định basePath/[number]
                 return `${basePath}/${pageNumber}`;
         }
     };
@@ -57,11 +56,6 @@ export default function Pagination({
                     Previous
                 </Link>
             )}
-
-            {/* Hiển thị số trang hiện tại để người dùng dễ theo dõi */}
-            {/* <span className="text-xs text-gray-500 px-4">
-                Page {current} of {totalPages}
-            </span> */}
 
             {!isLastPage && (
                 <Link
