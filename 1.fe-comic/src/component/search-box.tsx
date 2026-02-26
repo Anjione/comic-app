@@ -1,9 +1,19 @@
 // components/SearchBox.tsx
 "use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SearchBox() {
     const [query, setQuery] = useState("");
+    const router = useRouter();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (query.trim()) {
+            // Chuyển hướng đến trang home với tham số s
+            router.push(`/?s=${encodeURIComponent(query.trim())}`);
+        }
+    };
 
     return (
         <div>
@@ -25,12 +35,13 @@ export default function SearchBox() {
                     name="s"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="h-8 w-[185px] min-[1024px]:w-full text-[#000] bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none"
+                    className="h-8 w-[185px] min-[1024px]:w-full text-black bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none"
                 />
                 <button
                     type="submit"
                     id="searchsubmit"
-                    className="h-8 bg-[#000] text-xs text-white px-4 py-2 rounded flex-shrink-0"
+                    onClick={handleSearch}
+                    className="h-8 bg-black text-xs text-white px-4 py-2 rounded shrink-0 cursor-pointer"
                 >
                     Search
                 </button>
