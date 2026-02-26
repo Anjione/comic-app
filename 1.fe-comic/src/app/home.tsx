@@ -5,6 +5,7 @@ import LatestUpdate from "@/component/last-update";
 import PopularToday from "@/component/popular-today";
 import Recommendation from "@/component/recommendation";
 import SearchBox from "@/component/search-box";
+import SearchList from "@/component/search-list";
 import SerialPopular from "@/component/serial-popular";
 import { popularMangasSample, sampleItems } from "@/type/sample-data";
 import { useQuery } from "@tanstack/react-query";
@@ -20,9 +21,10 @@ import axios from "axios";
 export default function Home({
     searchParams,
 }: {
-    searchParams: { page: number };
+    searchParams: { page: number, s: string };
 }) {
     const page = Number(searchParams.page) || 1;
+    const searchKey = searchParams.s || "";
     // 2. Sử dụng useQuery
     const { data: popularMangas } = useQuery({
         queryKey: ['popular-manga'],
@@ -38,24 +40,44 @@ export default function Home({
         <div className="w-full">
             <div className="max-w-7xl m-[35px_auto] mb-[160px] min-[800px]:mb-[35px] min-[800px]:px-5 min-[1226px]:px-12 flex flex-col gap-4">
 
-                <div className="">
-                    <PopularToday items={popularMangas?.day && popularMangas.day.length > 0 ? popularMangas.day : popularMangasSample} maxVisible={7} />
-                </div>
+                {/* Điều kiện: Nếu có từ khóa tìm kiếm, hiển thị danh sách kết quả tìm kiếm */}
+                {searchKey ? (
+                    <div className="listupd grid grid-cols-1 lg:grid-cols-7 min-[880px]:grid-cols-17 gap-4">
+                        <div className="flex flex-col col-span-1 lg:col-span-5 min-[880px]:col-span-12 gap-4">
+                            <SearchList title={searchKey} />
+                        </div>
 
-                <div className="listupd grid grid-cols-1 lg:grid-cols-7 min-[880px]:grid-cols-17 gap-4">
-                    <div className="flex flex-col col-span-1 lg:col-span-5 min-[880px]:col-span-12 gap-4">
-                        <LatestUpdate items={sampleItems} nextPageUrl={`/page/${page + 1}`} page={page} pageSize={20} />
-                        <Recommendation />
-                        <Blog />
+                        <div className="flex flex-col gap-5 col-span-1 lg:col-span-2 min-[880px]:col-span-5">
+                            <SearchBox />
+                            <SerialPopular />
+                            <Genre />
+                        </div>
                     </div>
+                ) : (
+                    /* Nếu không có searchKey, hiển thị trang chủ mặc định */
+                    <>
+                        <div className="">
+                            <PopularToday
+                                items={popularMangas?.day && popularMangas.day.length > 0 ? popularMangas.day : popularMangasSample}
+                                maxVisible={7}
+                            />
+                        </div>
 
-                    <div className="flex flex-col gap-5 col-span-1 lg:col-span-2 min-[880px]:col-span-5">
-                        <SearchBox />
-                        {/* 4. Bên trong SerialPopular và Genre bạn cũng nên dùng useQuery tương tự */}
-                        <SerialPopular />
-                        <Genre />
-                    </div>
-                </div>
+                        <div className="listupd grid grid-cols-1 lg:grid-cols-7 min-[880px]:grid-cols-17 gap-4">
+                            <div className="flex flex-col col-span-1 lg:col-span-5 min-[880px]:col-span-12 gap-4">
+                                <LatestUpdate items={sampleItems} nextPageUrl={`/page/${page + 1}`} page={page} pageSize={20} />
+                                <Recommendation />
+                                <Blog />
+                            </div>
+
+                            <div className="flex flex-col gap-5 col-span-1 lg:col-span-2 min-[880px]:col-span-5">
+                                <SearchBox />
+                                <SerialPopular />
+                                <Genre />
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

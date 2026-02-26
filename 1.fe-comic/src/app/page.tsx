@@ -5,10 +5,11 @@ import Home from './home'; // Chúng ta sẽ đổi tên file Home cũ thành c�
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string, s?: string }>;
 }) {
-  const { page: pageString } = await searchParams;
+  const { page: pageString, s: searchString } = await searchParams;
   const page = Number(pageString) || 1;
+  const s = searchString || '';
   const queryClient = new QueryClient();
 
   // Chạy song song tất cả các API
@@ -46,7 +47,7 @@ export default async function Page({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Home searchParams={{ page }} />
+      <Home searchParams={{ page, s }} />
     </HydrationBoundary>
   );
 }
