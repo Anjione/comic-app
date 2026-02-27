@@ -2,10 +2,10 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Image from "next/image";
-import StarRating from '../../component/star-rating';
+import StarRating from '../common/star-rating';
 import { SeriesItem } from '../../type/comic-info';
 import { fira } from "@/lib/fonts";
-import Pagination from '../../component/pagination';
+import Pagination from '../common/pagination';
 import { Constants } from '../../constants';
 import { getTypeIcon } from '@/lib/common-util';
 

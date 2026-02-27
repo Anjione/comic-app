@@ -1,6 +1,6 @@
 "use client"
 import PaginationNumber from '@/component/common/pagination-number';
-import StarRating from '@/component/star-rating';
+import StarRating from '@/component/common/star-rating';
 import { getTypeIcon } from '@/lib/common-util';
 import { fira } from '@/lib/fonts';
 import { MangaListResponse } from '@/type/manga';

@@ -1,4 +1,4 @@
-import GenreMangaList from './genre-manga-list';
+import GenreMangaList from '../../component/genre/genre-manga-list';
 // Vì trang này sử dụng searchParams, nên cần wrap trong Suspense nếu build static
 // Hoặc đơn giản là component trang
 export default async function GenrePage() {

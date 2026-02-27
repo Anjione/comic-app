@@ -17,6 +17,14 @@
   /* mặc định đã là 1rem nhưng bạn có thể đổi */
 }
 
+@theme {
+  --color-comic-dark: #121212;
+  --color-comic-card: #1c1c1c;
+  --color-comic-input: #2a2a2a;
+  --color-comic-orange: #ff9f00;
+  --color-comic-text-gray: #a0a0a0;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

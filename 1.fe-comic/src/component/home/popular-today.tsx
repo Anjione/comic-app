@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import StarRating from "./star-rating";
+import StarRating from "../common/star-rating";
 import { fira } from "@/lib/fonts";
 import mangaSrc from "@/asset/manga.png";
 import manhwaSrc from "@/asset/manhwa.png";
