@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import Pagination from "./pagination";
+import Pagination from "../common/pagination";
 
 // ... (các imports khác)
 // ---------------------------------

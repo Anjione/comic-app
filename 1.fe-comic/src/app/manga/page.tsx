@@ -1,7 +1,7 @@
-import Genre from '@/component/genre';
-import SearchBox from '@/component/search-box';
-import SerialPopular from '@/component/serial-popular';
-import MangaList from './manga-list';
+import Genre from '@/component/genre/genre';
+import MangaList from '@/component/manga/manga-list';
+import SearchBox from '@/component/common/search-box';
+import SerialPopular from '@/component/common/serial-popular';
 // Vì trang này sử dụng searchParams, nên cần wrap trong Suspense nếu build static
 // Hoặc đơn giản là component trang
 export default async function MangaPage({

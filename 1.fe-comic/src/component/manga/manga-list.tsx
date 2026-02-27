@@ -1,6 +1,6 @@
 "use client";
 
-import QuickFilter from '@/component/quick-filter';
+import QuickFilter from '@/component/common/quick-filter';
 import { getTypeIcon } from '@/lib/common-util';
 import { fira } from "@/lib/fonts";
 import { MangaData, MangaListParams } from '@/type/manga';
@@ -8,8 +8,8 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from "next/image";
 import Link from 'next/link';
-import Pagination from '../../component/pagination';
-import StarRating from '../../component/star-rating';
+import Pagination from '../common/pagination';
+import StarRating from '../common/star-rating';
 
 // 1. Định nghĩa Interface chuẩn cho Response
 interface MangaListResponse {

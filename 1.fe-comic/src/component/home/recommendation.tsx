@@ -7,7 +7,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { JSX, useEffect, useMemo, useState } from "react";
-import StarRating from "./star-rating";
+import StarRating from "../common/star-rating";
 import { RecommendationResponse } from "@/type/recommend-data";
 
 function tabClass(isActive: boolean) {

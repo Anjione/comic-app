@@ -1,7 +1,7 @@
-import BookmarkCard from '@/app/bookmark/bookmark-card';
-import Genre from '@/component/genre';
-import SearchBox from '@/component/search-box';
-import SerialPopular from '@/component/serial-popular';
+import BookmarkCard from '@/component/bookmark/bookmark-card';
+import Genre from '@/component/genre/genre';
+import SearchBox from '@/component/common/search-box';
+import SerialPopular from '@/component/common/serial-popular';
 
 export default function BookmarkPage() {
     return (

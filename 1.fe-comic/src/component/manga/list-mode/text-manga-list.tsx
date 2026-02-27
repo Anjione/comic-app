@@ -1,6 +1,6 @@
 "use client"
-import AlphabeticalNav from '@/component/alphabet-nav';
-import QuickFilter from '@/component/quick-filter';
+import AlphabeticalNav from '@/component/common/alphabet-nav';
+import QuickFilter from '@/component/common/quick-filter';
 import { TextModeComicResponse } from '@/type/comic-info';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';

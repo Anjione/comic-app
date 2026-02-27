@@ -1,6 +1,6 @@
 "use client"
 import PaginationNumber from '@/component/common/pagination-number';
-import StarRating from '@/component/star-rating';
+import StarRating from '@/component/common/star-rating';
 import { getTypeIcon } from '@/lib/common-util';
 import { fira } from '@/lib/fonts';
 import { MangaListResponse } from '@/type/manga';
@@ -10,7 +10,20 @@ import Image from "next/image";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function SearchList({ title }: { title: string | string[] | undefined }) {
+
+// --- Dữ liệu tĩnh cho A-Z List ---
+const ALPHABET = [
+    { char: '#', param: '.' },
+    { char: '0-9', param: '0-9' },
+    ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)).map(char => ({
+        char,
+        param: char,
+    })),
+];
+
+export default function AZLists({ show }: { show: string | string[] | undefined }) {
+    const BASE_URL = "/az-lists";
+
     const pathname = usePathname(); // Đảm bảo đã import từ next/navigation
     // const searchParams = useSearchParams();
 
@@ -23,13 +36,13 @@ export default function SearchList({ title }: { title: string | string[] | undef
 
     // 3. React Query với đầy đủ Dependencies
     const { data: response } = useQuery<MangaListResponse>({
-        queryKey: ['search-list', pageNum, title],
+        queryKey: ['az-list', pageNum, show],
         queryFn: async () => {
             // Tạo object chứa tất cả params dự kiến
             const rawParams = {
                 pageNum,
                 pageSize: 20,
-                title,
+                show,
             };
 
             // Lọc bỏ các key có giá trị falsy (chuỗi rỗng, null, undefined)
@@ -53,6 +66,24 @@ export default function SearchList({ title }: { title: string | string[] | undef
     // Logic cho Pagination: Lấy trực tiếp từ API trả về
     const totalPages = paging?.totalPages || 2;
 
+    // const bookmarks: SeriesItem[] = [
+    //     { id: 1, rank: 1, chapter: "Chapter 1", title: "Magic Emperor", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manga", colored: true },
+    //     { id: 2, rank: 2, chapter: "Chapter 2", title: "Tales of Demons and Gods", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 3, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 4, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 5, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 6, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 7, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 8, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 9, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 10, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 11, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 12, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    //     { id: 13, rank: 3, chapter: "Chapter 3", title: "Swordmaster’s Youngest Son", href: "#", img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop", genres: ["Action", "Adventure", "Fantasy"], score: 7, type: "Manhwa", colored: true },
+    // ];
+
+    // const total = bookmarks.length; 
+
     return (
         // Thay thế div.bixbox
         <div className="bg-[#222222]">
@@ -60,9 +91,34 @@ export default function SearchList({ title }: { title: string | string[] | undef
             {/* Thay thế div.releases.blog */}
             <div className="release flex items-center justify-between">
                 <h2 className="font-semibold">
-                    Search &quot;{title}&quot;
+                    AZ Lists
                 </h2>
             </div>
+            {/* Danh sách A-Z (ul.az-list) */}
+            {/* Sử dụng flex-wrap để cuộn ngang trên di động nếu cần, hoặc grid để cố định */}
+            <ul className="flex flex-wrap justify-center sm:justify-center gap-3 p-4 list-none">
+                {ALPHABET.map((item) => (
+                    <li key={item.char} className="shrink-0">
+                        <Link
+                            href={`${BASE_URL}/?show=${item.param}`}
+                            className="
+                  block 
+                  w-8 h-8 
+                  leading-8 
+                  text-center 
+                  text-[14px] 
+                  font-semibold 
+                  bg-black text-white
+                  hover:text-[#999] 
+                  transition-colors 
+                  duration-200
+                "
+                        >
+                            {item.char}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
             <div className="grid grid-cols-3 min-[670px]:grid-cols-5 gap-4 p-5">
                 {pageItems.map((it) => {
                     const iconSrc = getTypeIcon(it.mangaCategory || "Manga");
